@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/favicon-32x32.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CountClock</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Oswald:400,700,300');
+    body {
+      font-family: 'Oswald', sans-serif;
+      background-color: #1a1a1a;
+      color: #f9f9f9;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      transition: background-color 0.5s;
+    }
+    .container {
+      text-align: center;
+      max-width: 800px;
+      width: 100%;
+      padding: 20px;
+      position: relative;
+    }
+    .clock {
+      font-size: 4rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #f9f9f9;
+    }
+    .date {
+      font-size: 1.2rem;
+      color: #bbb;
+      font-weight: 300;
+    }
+    .countdown-container {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .countdown-item {
+      text-align: center;
+    }
+    .countdown-item span {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f9f9f9;
+    }
+    .countdown-item label {
+      font-size: 1rem;
+      color: #bbb;
+      font-weight: 300;
+    }
+    .input-container {
+      margin-top: 20px;
+    }
+    .input-container input {
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #444;
+      border-radius: 5px;
+      width: 100%;
+      max-width: 300px;
+      background-color: #333;
+      color: #f9f9f9;
+    }
+    .buttons-container {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .buttons-container button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: opacity 0.3s;
+      font-weight: 400;
+    }
+    .buttons-container button:hover {
+      opacity: 0.9;
+    }
+    #timeout-message {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #ff4444;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      display: none;
+    }
+    #timeout-message button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .menu-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      z-index: 10;
+      font-weight: 400;
+    }
+    .menu-button:hover {
+      background-color: #0056b3;
+    }
+    @media (max-width: 600px) {
+      .clock {
+        font-size: 3rem;
+      }
+      .date {
+        font-size: 1rem;
+      }
+      .menu-button {
+        top: 10px;
+        right: 10px;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+      .buttons-container button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+      .input-container input {
+        font-size: 0.9rem;
+        padding: 8px;
+      }
+    }
+    @keyframes blink {
+      0% { background-color: #ff4444; }
+      50% { background-color: #1a1a1a; }
+      100% { background-color: #ff4444; }
+    }
+    .blink {
+      animation: blink 0.5s linear 3;
+    }
+  </style>
+</head>
+<body>
+  <!-- Mensagem de tempo esgotado -->
+  <div id="timeout-message">
+    Tempo Esgotado!
+    <button onclick="resetCountdown()">Reiniciar</button>
+  </div>
+
+  <!-- Indicador de conexão -->
+  <div id="connection-status" style="position: fixed; top: 10px; left: 10px; padding: 5px 10px; border-radius: 5px; display: none;">
+    <span id="connection-text"></span>
+  </div>
+
+  <div class="container">
+    <!-- Botão de clima -->
+    <button aria-label="Ver clima" class="menu-button" onclick="window.location.href = 'clima.html';">Clima</button>
+
+    <!-- Relógio -->
+    <div class="clock" id="current-time">--:--:--</div>
+    <div class="date" id="current-date">Atualizando...</div>
+    <div class="date" id="current-day-details">Atualizando...</div>
+
+    <!-- Contagem Regressiva -->
+    <div class="countdown-container">
+      <div class="countdown-item">
+        <span id="days">0</span>
+        <label id="days-label">Dias</label>
+      </div>
+      <div class="countdown-item">
+        <span id="hours">0</span>
+        <label id="hours-label">Horas</label>
+      </div>
+      <div class="countdown-item">
+        <span id="minutes">0</span>
+        <label id="minutes-label">Minutos</label>
+      </div>
+      <div class="countdown-item">
+        <span id="seconds">0</span>
+        <label id="seconds-label">Segundos</label>
+      </div>
+    </div>
+
+    <!-- Input e Botões -->
+    <div class="input-container">
+      <input type="datetime-local" id="datetime" class="datetime-input" />
+      <input type="text" id="alarm-url" placeholder="URL do som de alarme (opcional)" class="datetime-input" style="margin-top: 10px;" />
+    </div>
+    <div class="buttons-container">
+      <button aria-label="Iniciar contagem regressiva" onclick="startCountdown()" style="background-color: #28a745; color: white;">Iniciar</button>
+      <button aria-label="Salvar contagem regressiva" onclick="saveCountdown()" style="background-color: #007bff; color: white;">Salvar</button>
+      <button onclick="stopAlarm()">Parar Alarme</button>
+    </div>
+  </div>
+
+  <!-- Som de alarme -->
+  <audio id="alarm-sound">
+    <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mpeg">
+    Seu navegador não suporta o elemento de áudio.
+  </audio>
+
+  <script>
+    // Função para atualizar o relógio
+    function updateClock() {
+      const now = new Date();
+      const formattedTime = now.toLocaleTimeString();
+      const formattedDate = now.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+      const weekday = now.toLocaleDateString('pt-BR', { weekday: 'long' });
+      const start = new Date(now.getFullYear(), 0, 0);
+      const diff = now - start + (start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000;
+      const oneDay = 1000 * 60 * 60 * 24;
+      const dayOfYear = Math.floor(diff / oneDay);
+
+      document.getElementById('current-time').textContent = formattedTime;
+      document.getElementById('current-date').textContent = formattedDate;
+      document.getElementById('current-day-details').textContent = `Hoje é ${weekday}, o ${dayOfYear}º dia do ano.`;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    let countdownInterval;
+    let countdownDate;
+
+    // Registra o Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then((registration) => {
+          console.log('Service Worker registrado com sucesso:', registration);
+        })
+        .catch((error) => {
+          console.log('Falha ao registrar o Service Worker:', error);
+        });
+    }
+
+    // Função para verificar a conexão
+    function checkConnection() {
+      const connectionStatus = document.getElementById('connection-status');
+      const connectionText = document.getElementById('connection-text');
+
+      if (navigator.onLine) {
+        connectionStatus.style.backgroundColor = '#28a745';
+        connectionText.textContent = 'Online';
+      } else {
+        connectionStatus.style.backgroundColor = '#ff4444';
+        connectionText.textContent = 'Offline';
+      }
+      connectionStatus.style.display = 'block';
+    }
+
+    // Verifica a conexão ao carregar a página e em intervalos regulares
+    window.addEventListener('load', checkConnection);
+    window.addEventListener('online', checkConnection);
+    window.addEventListener('offline', checkConnection);
+    setInterval(checkConnection, 5000);
+
+    // Função para validar a URL do som de alarme
+    function isValidAudioUrl(url) {
+      const audioExtensions = ['.mp3', '.wav', '.ogg'];
+      const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+      return audioExtensions.some(ext => url.endsWith(ext)) && urlPattern.test(url);
+    }
+
+    // Função para verificar se a URL do áudio é acessível
+    async function checkAudioUrl(url) {
+      try {
+        const response = await fetch(url, { method: 'HEAD' });
+        return response.ok;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    // Função para solicitar autorização para tocar o som
+    function requestAudioPermission() {
+      const alarmSound = document.getElementById('alarm-sound');
+      return alarmSound.play().then(() => {
+        alarmSound.pause(); // Pausa o som após a permissão ser concedida
+        alarmSound.currentTime = 0; // Reinicia o áudio
+      }).catch((error) => {
+        console.error('Erro ao solicitar permissão de áudio:', error);
+      });
+    }
+
+    // Função para solicitar permissão de notificação
+    function requestNotificationPermission() {
+      if (Notification.permission !== 'granted') {
+        Notification.requestPermission().then((permission) => {
+          if (permission === 'granted') {
+            console.log('Permissão para notificações concedida.');
+          }
+        });
+      }
+    }
+
+    // Função para exibir notificação
+    function showNotification() {
+      if (Notification.permission === 'granted') {
+        new Notification('Tempo Esgotado!', {
+          body: 'A contagem regressiva terminou.',
+          icon: 'icons/icon-192x192.png'
+        });
+      }
+    }
+
+    // Função para exibir mensagens de erro
+    function showError(message) {
+      const errorMessage = document.createElement('div');
+      errorMessage.style.position = 'fixed';
+      errorMessage.style.top = '20px';
+      errorMessage.style.left = '50%';
+      errorMessage.style.transform = 'translateX(-50%)';
+      errorMessage.style.backgroundColor = '#ff4444';
+      errorMessage.style.color = 'white';
+      errorMessage.style.padding = '10px 20px';
+      errorMessage.style.borderRadius = '5px';
+      errorMessage.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+      errorMessage.textContent = message;
+
+      document.body.appendChild(errorMessage);
+
+      setTimeout(() => {
+        document.body.removeChild(errorMessage);
+      }, 5000);
+    }
+
+    // Função para iniciar a contagem regressiva
+    async function startCountdown() {
+      const datetimeInput = document.getElementById('datetime').value;
+      const alarmUrl = document.getElementById('alarm-url').value;
+
+      if (!datetimeInput) {
+        showError('Por favor, insira uma data e hora válida.');
+        return;
+      }
+
+      if (alarmUrl && !isValidAudioUrl(alarmUrl)) {
+        showError('Por favor, insira uma URL de áudio válida (MP3, WAV, OGG).');
+        return;
+      }
+
+      if (alarmUrl && !(await checkAudioUrl(alarmUrl))) {
+        showError('A URL do áudio não é acessível. Verifique o link e tente novamente.');
+        return;
+      }
+
+      const now = new Date().getTime();
+      const selectedDate = new Date(datetimeInput).getTime();
+
+      if (selectedDate <= now) {
+        showError('Por favor, insira uma data e hora futura.');
+        return;
+      }
+
+      // Solicita permissão para tocar o som
+      requestAudioPermission().then(() => {
+        clearInterval(countdownInterval);
+        countdownDate = selectedDate;
+
+        const alarmSound = document.getElementById('alarm-sound');
+        if (alarmUrl) {
+          alarmSound.src = alarmUrl;
+        } else {
+          alarmSound.src = 'https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3'; // Som padrão
+        }
+
+        updateCountdown();
+        countdownInterval = setInterval(updateCountdown, 1000);
+      }).catch(() => {
+        showError('Permissão para tocar o som foi negada. O alarme não funcionará.');
+      });
+    }
+
+    // Função para salvar a contagem regressiva
+    function saveCountdown() {
+      const datetimeInput = document.getElementById('datetime').value;
+      if (!datetimeInput) {
+        showError('Por favor, insira uma data e hora válida.');
+        return;
+      }
+      localStorage.setItem('countdownDate', datetimeInput);
+      showError('Contagem Regressiva Salva!');
+    }
+
+    // Função para carregar a contagem regressiva salva
+    function loadSavedCountdown() {
+      const savedCountdown = localStorage.getItem('countdownDate');
+      if (savedCountdown) {
+        const now = new Date().getTime();
+        const selectedDate = new Date(savedCountdown).getTime();
+        if (selectedDate > now) {
+          document.getElementById('datetime').value = savedCountdown;
+          startCountdown();
+        } else {
+          localStorage.removeItem('countdownDate');
+        }
+      }
+    }
+
+    // Função para atualizar a contagem regressiva
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = countdownDate - now;
+
+      if (distance < 0) {
+        clearInterval(countdownInterval);
+        showTimeoutMessage();
+        playAlarmSound();
+        showNotification(); // Exibir notificação
+        resetCountdown();
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById('days').innerText = days;
+      document.getElementById('hours').innerText = hours;
+      document.getElementById('minutes').innerText = minutes;
+      document.getElementById('seconds').innerText = seconds;
+    }
+
+    // Função para tocar o som de alarme
+    function playAlarmSound() {
+      const alarmSound = document.getElementById('alarm-sound');
+      alarmSound.play();
+      document.body.classList.add('blink');
+      setTimeout(() => {
+        document.body.classList.remove('blink');
+        document.body.style.backgroundColor = '#1a1a1a';
+      }, 1500); // Duração da animação
+    }
+
+    // Função para parar o som de alarme
+    function stopAlarm() {
+      const alarmSound = document.getElementById('alarm-sound');
+      alarmSound.pause();
+      alarmSound.currentTime = 0;
+    }
+
+    // Função para redefinir a contagem regressiva
+    function resetCountdown() {
+      document.getElementById('days').innerText = 0;
+      document.getElementById('hours').innerText = 0;
+      document.getElementById('minutes').innerText = 0;
+      document.getElementById('seconds').innerText = 0;
+      document.getElementById('datetime').value = '';
+      document.getElementById('alarm-url').value = '';
+      localStorage.removeItem('countdownDate');
+    }
+
+    // Função para exibir a mensagem de tempo esgotado
+    function showTimeoutMessage() {
+      const messageElement = document.getElementById('timeout-message');
+      messageElement.style.display = 'block';
+      setTimeout(() => {
+        messageElement.style.display = 'none';
+      }, 5000);
+    }
+
+    // Carrega a contagem regressiva salva ao carregar a página
+    window.onload = () => {
+      loadSavedCountdown();
+      requestNotificationPermission();
+      checkConnection();
+    };
+  </script>
+</body>
+</html>
