@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icons/favicon-32x32.png" type="image/png">
-  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>CountClock</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.tailwindcss.com">
   <style>
     @import url('https://fonts.googleapis.com/css?family=Oswald:400,700,300');
     body {
@@ -162,27 +158,22 @@
   </style>
 </head>
 <body>
-  <!-- Mensagem de tempo esgotado -->
   <div id="timeout-message">
     Tempo Esgotado!
     <button onclick="resetCountdown()">Reiniciar</button>
   </div>
 
-  <!-- Indicador de conexão -->
   <div id="connection-status" style="position: fixed; top: 10px; left: 10px; padding: 5px 10px; border-radius: 5px; display: none;">
     <span id="connection-text"></span>
   </div>
 
   <div class="container">
-    <!-- Botão de clima -->
     <button aria-label="Ver clima" class="menu-button" onclick="window.location.href = 'clima.html';">Clima</button>
 
-    <!-- Relógio -->
     <div class="clock" id="current-time">--:--:--</div>
     <div class="date" id="current-date">Atualizando...</div>
     <div class="date" id="current-day-details">Atualizando...</div>
 
-    <!-- Contagem Regressiva -->
     <div class="countdown-container">
       <div class="countdown-item">
         <span id="days">0</span>
@@ -202,7 +193,6 @@
       </div>
     </div>
 
-    <!-- Input e Botões -->
     <div class="input-container">
       <input type="datetime-local" id="datetime" class="datetime-input" />
       <input type="text" id="alarm-url" placeholder="URL do som de alarme (opcional)" class="datetime-input" style="margin-top: 10px;" />
@@ -214,7 +204,6 @@
     </div>
   </div>
 
-  <!-- Som de alarme -->
   <audio id="alarm-sound">
     <source src="https://github.com/souandresouza/projeto/raw/main/contagem.mp3" type="audio/mpeg">
     Seu navegador não suporta o elemento de áudio.
@@ -244,125 +233,11 @@
     let countdownInterval;
     let countdownDate;
 
-    // Registra o Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then((registration) => {
-          console.log('Service Worker registrado com sucesso:', registration);
-        })
-        .catch((error) => {
-          console.log('Falha ao registrar o Service Worker:', error);
-        });
-    }
-
-    // Função para verificar a conexão
-    function checkConnection() {
-      const connectionStatus = document.getElementById('connection-status');
-      const connectionText = document.getElementById('connection-text');
-
-      if (navigator.onLine) {
-        connectionStatus.style.backgroundColor = '#28a745';
-        connectionText.textContent = 'Online';
-      } else {
-        connectionStatus.style.backgroundColor = '#ff4444';
-        connectionText.textContent = 'Offline';
-      }
-      connectionStatus.style.display = 'block';
-    }
-
-    // Verifica a conexão ao carregar a página e em intervalos regulares
-    window.addEventListener('load', checkConnection);
-    window.addEventListener('online', checkConnection);
-    window.addEventListener('offline', checkConnection);
-    setInterval(checkConnection, 5000);
-
-    // Função para validar a URL do som de alarme
-    function isValidAudioUrl(url) {
-      const audioExtensions = ['.mp3', '.wav', '.ogg'];
-      const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-      return audioExtensions.some(ext => url.endsWith(ext)) && urlPattern.test(url);
-    }
-
-    // Função para verificar se a URL do áudio é acessível
-    async function checkAudioUrl(url) {
-      try {
-        const response = await fetch(url, { method: 'HEAD' });
-        return response.ok;
-      } catch (error) {
-        return false;
-      }
-    }
-
-    // Função para solicitar autorização para tocar o som
-    function requestAudioPermission() {
-      const alarmSound = document.getElementById('alarm-sound');
-      return alarmSound.play().then(() => {
-        alarmSound.pause(); // Pausa o som após a permissão ser concedida
-        alarmSound.currentTime = 0; // Reinicia o áudio
-      }).catch((error) => {
-        console.error('Erro ao solicitar permissão de áudio:', error);
-      });
-    }
-
-    // Função para solicitar permissão de notificação
-    function requestNotificationPermission() {
-      if (Notification.permission !== 'granted') {
-        Notification.requestPermission().then((permission) => {
-          if (permission === 'granted') {
-            console.log('Permissão para notificações concedida.');
-          }
-        });
-      }
-    }
-
-    // Função para exibir notificação
-    function showNotification() {
-      if (Notification.permission === 'granted') {
-        new Notification('Tempo Esgotado!', {
-          body: 'A contagem regressiva terminou.',
-          icon: 'icons/icon-192x192.png'
-        });
-      }
-    }
-
-    // Função para exibir mensagens de erro
-    function showError(message) {
-      const errorMessage = document.createElement('div');
-      errorMessage.style.position = 'fixed';
-      errorMessage.style.top = '20px';
-      errorMessage.style.left = '50%';
-      errorMessage.style.transform = 'translateX(-50%)';
-      errorMessage.style.backgroundColor = '#ff4444';
-      errorMessage.style.color = 'white';
-      errorMessage.style.padding = '10px 20px';
-      errorMessage.style.borderRadius = '5px';
-      errorMessage.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-      errorMessage.textContent = message;
-
-      document.body.appendChild(errorMessage);
-
-      setTimeout(() => {
-        document.body.removeChild(errorMessage);
-      }, 5000);
-    }
-
     // Função para iniciar a contagem regressiva
-    async function startCountdown() {
+    function startCountdown() {
       const datetimeInput = document.getElementById('datetime').value;
-      const alarmUrl = document.getElementById('alarm-url').value;
-
       if (!datetimeInput) {
-        showError('Por favor, insira uma data e hora válida.');
-        return;
-      }
-
-      if (alarmUrl && !isValidAudioUrl(alarmUrl)) {
-        showError('Por favor, insira uma URL de áudio válida (MP3, WAV, OGG).');
-        return;
-      }
-
-      if (alarmUrl && !(await checkAudioUrl(alarmUrl))) {
-        showError('A URL do áudio não é acessível. Verifique o link e tente novamente.');
+        alert('Por favor, insira uma data e hora válida.');
         return;
       }
 
@@ -370,53 +245,15 @@
       const selectedDate = new Date(datetimeInput).getTime();
 
       if (selectedDate <= now) {
-        showError('Por favor, insira uma data e hora futura.');
+        alert('Por favor, insira uma data e hora futura.');
         return;
       }
 
-      // Solicita permissão para tocar o som
-      requestAudioPermission().then(() => {
-        clearInterval(countdownInterval);
-        countdownDate = selectedDate;
+      clearInterval(countdownInterval);
+      countdownDate = selectedDate;
 
-        const alarmSound = document.getElementById('alarm-sound');
-        if (alarmUrl) {
-          alarmSound.src = alarmUrl;
-        } else {
-          alarmSound.src = 'https://github.com/souandresouza/projeto/raw/main/contagem.mp3'; // Som padrão
-        }
-
-        updateCountdown();
-        countdownInterval = setInterval(updateCountdown, 1000);
-      }).catch(() => {
-        showError('Permissão para tocar o som foi negada. O alarme não funcionará.');
-      });
-    }
-
-    // Função para salvar a contagem regressiva
-    function saveCountdown() {
-      const datetimeInput = document.getElementById('datetime').value;
-      if (!datetimeInput) {
-        showError('Por favor, insira uma data e hora válida.');
-        return;
-      }
-      localStorage.setItem('countdownDate', datetimeInput);
-      showError('Contagem Regressiva Salva!');
-    }
-
-    // Função para carregar a contagem regressiva salva
-    function loadSavedCountdown() {
-      const savedCountdown = localStorage.getItem('countdownDate');
-      if (savedCountdown) {
-        const now = new Date().getTime();
-        const selectedDate = new Date(savedCountdown).getTime();
-        if (selectedDate > now) {
-          document.getElementById('datetime').value = savedCountdown;
-          startCountdown();
-        } else {
-          localStorage.removeItem('countdownDate');
-        }
-      }
+      updateCountdown();
+      countdownInterval = setInterval(updateCountdown, 1000);
     }
 
     // Função para atualizar a contagem regressiva
@@ -428,8 +265,6 @@
         clearInterval(countdownInterval);
         showTimeoutMessage();
         playAlarmSound();
-        showNotification(); // Exibir notificação
-        resetCountdown();
         return;
       }
 
@@ -451,8 +286,7 @@
       document.body.classList.add('blink');
       setTimeout(() => {
         document.body.classList.remove('blink');
-        document.body.style.backgroundColor = '#1a1a1a';
-      }, 1500); // Duração da animação
+      }, 1500);
     }
 
     // Função para parar o som de alarme
@@ -460,17 +294,6 @@
       const alarmSound = document.getElementById('alarm-sound');
       alarmSound.pause();
       alarmSound.currentTime = 0;
-    }
-
-    // Função para redefinir a contagem regressiva
-    function resetCountdown() {
-      document.getElementById('days').innerText = 0;
-      document.getElementById('hours').innerText = 0;
-      document.getElementById('minutes').innerText = 0;
-      document.getElementById('seconds').innerText = 0;
-      document.getElementById('datetime').value = '';
-      document.getElementById('alarm-url').value = '';
-      localStorage.removeItem('countdownDate');
     }
 
     // Função para exibir a mensagem de tempo esgotado
@@ -482,11 +305,20 @@
       }, 5000);
     }
 
+    // Função para redefinir a contagem regressiva
+    function resetCountdown() {
+      clearInterval(countdownInterval);
+      document.getElementById('days').innerText = 0;
+      document.getElementById('hours').innerText = 0;
+      document.getElementById('minutes').innerText = 0;
+      document.getElementById('seconds').innerText = 0;
+      document.getElementById('datetime').value = '';
+      document.getElementById('alarm-url').value = '';
+    }
+
     // Carrega a contagem regressiva salva ao carregar a página
     window.onload = () => {
-      loadSavedCountdown();
-      requestNotificationPermission();
-      checkConnection();
+      updateClock();
     };
   </script>
 </body>
