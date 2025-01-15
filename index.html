@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/favicon-32x32.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>CountClock</title>
-  <link rel="stylesheet" href="https://cdn.tailwindcss.com">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css?family=Oswald:400,700,300');
     body {
@@ -158,22 +162,22 @@
   </style>
 </head>
 <body>
+  <!-- Mensagem de tempo esgotado -->
   <div id="timeout-message">
     Tempo Esgotado!
     <button onclick="resetCountdown()">Reiniciar</button>
   </div>
 
-  <div id="connection-status" style="position: fixed; top: 10px; left: 10px; padding: 5px 10px; border-radius: 5px; display: none;">
-    <span id="connection-text"></span>
-  </div>
-
   <div class="container">
-    <button aria-label="Ver clima" class="menu-button" onclick="window.location.href = 'clima.html';">Clima</button>
+    <!-- Botão de clima -->
+    <button class="menu-button" onclick="window.location.href = 'clima.html';">Clima</button>
 
+    <!-- Relógio -->
     <div class="clock" id="current-time">--:--:--</div>
     <div class="date" id="current-date">Atualizando...</div>
     <div class="date" id="current-day-details">Atualizando...</div>
 
+    <!-- Contagem Regressiva -->
     <div class="countdown-container">
       <div class="countdown-item">
         <span id="days">0</span>
@@ -193,19 +197,19 @@
       </div>
     </div>
 
+    <!-- Input e Botões -->
     <div class="input-container">
       <input type="datetime-local" id="datetime" class="datetime-input" />
-      <input type="text" id="alarm-url" placeholder="URL do som de alarme (opcional)" class="datetime-input" style="margin-top: 10px;" />
     </div>
     <div class="buttons-container">
-      <button aria-label="Iniciar contagem regressiva" onclick="startCountdown()" style="background-color: #28a745; color: white;">Iniciar</button>
-      <button aria-label="Salvar contagem regressiva" onclick="saveCountdown()" style="background-color: #007bff; color: white;">Salvar</button>
-      <button onclick="stopAlarm()">Parar Alarme</button>
+      <button onclick="startCountdown()" style="background-color: #28a745; color: white;">Iniciar</button>
+      <button onclick="saveCountdown()" style="background-color: #007bff; color: white;">Salvar</button>
     </div>
   </div>
 
+  <!-- Som de alarme -->
   <audio id="alarm-sound">
-    <source src="https://github.com/souandresouza/projeto/raw/main/contagem.mp3" type="audio/mpeg">
+    <source src="contagem.mp3" type="audio/mpeg">
     Seu navegador não suporta o elemento de áudio.
   </audio>
 
@@ -233,9 +237,32 @@
     let countdownInterval;
     let countdownDate;
 
+    // Registra o Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then((registration) => {
+          console.log('Service Worker registrado com sucesso:', registration);
+        })
+        .catch((error) => {
+          console.log('Falha ao registrar o Service Worker:', error);
+        });
+    }
+
+    // Função para solicitar autorização para tocar o som
+    function requestAudioPermission() {
+      const alarmSound = document.getElementById('alarm-sound');
+      return alarmSound.play().then(() => {
+        alarmSound.pause(); // Pausa o som após a permissão ser concedida
+        alarmSound.currentTime = 0; // Reinicia o áudio
+      }).catch((error) => {
+        console.error('Erro ao solicitar permissão de áudio:', error);
+      });
+    }
+
     // Função para iniciar a contagem regressiva
     function startCountdown() {
       const datetimeInput = document.getElementById('datetime').value;
+
       if (!datetimeInput) {
         alert('Por favor, insira uma data e hora válida.');
         return;
@@ -249,11 +276,45 @@
         return;
       }
 
-      clearInterval(countdownInterval);
-      countdownDate = selectedDate;
+      // Solicita permissão para tocar o som
+      requestAudioPermission().then(() => {
+        clearInterval(countdownInterval);
+        countdownDate = selectedDate;
 
-      updateCountdown();
-      countdownInterval = setInterval(updateCountdown, 1000);
+        const alarmSound = document.getElementById('alarm-sound');
+        alarmSound.src = 'contagem.mp3'; // Usa o áudio local como padrão
+
+        updateCountdown();
+        countdownInterval = setInterval(updateCountdown, 1000);
+      }).catch(() => {
+        alert('Permissão para tocar o som foi negada. O alarme não funcionará.');
+      });
+    }
+
+    // Função para salvar a contagem regressiva
+    function saveCountdown() {
+      const datetimeInput = document.getElementById('datetime').value;
+      if (!datetimeInput) {
+        alert('Por favor, insira uma data e hora válida.');
+        return;
+      }
+      localStorage.setItem('countdownDate', datetimeInput);
+      alert('Contagem Regressiva Salva!');
+    }
+
+    // Função para carregar a contagem regressiva salva
+    function loadSavedCountdown() {
+      const savedCountdown = localStorage.getItem('countdownDate');
+      if (savedCountdown) {
+        const now = new Date().getTime();
+        const selectedDate = new Date(savedCountdown).getTime();
+        if (selectedDate > now) {
+          document.getElementById('datetime').value = savedCountdown;
+          startCountdown();
+        } else {
+          localStorage.removeItem('countdownDate');
+        }
+      }
     }
 
     // Função para atualizar a contagem regressiva
@@ -265,6 +326,7 @@
         clearInterval(countdownInterval);
         showTimeoutMessage();
         playAlarmSound();
+        resetCountdown();
         return;
       }
 
@@ -286,14 +348,18 @@
       document.body.classList.add('blink');
       setTimeout(() => {
         document.body.classList.remove('blink');
-      }, 1500);
+        document.body.style.backgroundColor = '#1a1a1a';
+      }, 1500); // Duração da animação
     }
 
-    // Função para parar o som de alarme
-    function stopAlarm() {
-      const alarmSound = document.getElementById('alarm-sound');
-      alarmSound.pause();
-      alarmSound.currentTime = 0;
+    // Função para redefinir a contagem regressiva
+    function resetCountdown() {
+      document.getElementById('days').innerText = 0;
+      document.getElementById('hours').innerText = 0;
+      document.getElementById('minutes').innerText = 0;
+      document.getElementById('seconds').innerText = 0;
+      document.getElementById('datetime').value = '';
+      localStorage.removeItem('countdownDate');
     }
 
     // Função para exibir a mensagem de tempo esgotado
@@ -305,21 +371,8 @@
       }, 5000);
     }
 
-    // Função para redefinir a contagem regressiva
-    function resetCountdown() {
-      clearInterval(countdownInterval);
-      document.getElementById('days').innerText = 0;
-      document.getElementById('hours').innerText = 0;
-      document.getElementById('minutes').innerText = 0;
-      document.getElementById('seconds').innerText = 0;
-      document.getElementById('datetime').value = '';
-      document.getElementById('alarm-url').value = '';
-    }
-
     // Carrega a contagem regressiva salva ao carregar a página
-    window.onload = () => {
-      updateClock();
-    };
+    window.onload = loadSavedCountdown;
   </script>
 </body>
 </html>
