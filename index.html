@@ -202,6 +202,7 @@
       <input type="datetime-local" id="datetime" class="datetime-input" />
     </div>
     <div class="buttons-container">
+      <button onclick="enableSound()" style="background-color: #ffc107; color: black;">Habilitar Som</button>
       <button onclick="startCountdown()" style="background-color: #28a745; color: white;">Iniciar</button>
       <button onclick="saveCountdown()" style="background-color: #007bff; color: white;">Salvar</button>
     </div>
@@ -237,26 +238,19 @@
     let countdownInterval;
     let countdownDate;
 
-    // Registra o Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then((registration) => {
-          console.log('Service Worker registrado com sucesso:', registration);
+    // Função para habilitar o som
+    function enableSound() {
+      const alarmSound = document.getElementById('alarm-sound');
+      alarmSound.play()
+        .then(() => {
+          alarmSound.pause(); // Pausa o som após a permissão ser concedida
+          alarmSound.currentTime = 0; // Reinicia o áudio
+          alert('Som habilitado! Agora o alarme funcionará corretamente.');
         })
         .catch((error) => {
-          console.log('Falha ao registrar o Service Worker:', error);
+          alert('Erro ao habilitar o som. Certifique-se de permitir a reprodução de áudio.');
+          console.error('Erro ao habilitar o som:', error);
         });
-    }
-
-    // Função para solicitar autorização para tocar o som
-    function requestAudioPermission() {
-      const alarmSound = document.getElementById('alarm-sound');
-      return alarmSound.play().then(() => {
-        alarmSound.pause(); // Pausa o som após a permissão ser concedida
-        alarmSound.currentTime = 0; // Reinicia o áudio
-      }).catch((error) => {
-        console.error('Erro ao solicitar permissão de áudio:', error);
-      });
     }
 
     // Função para iniciar a contagem regressiva
@@ -276,19 +270,11 @@
         return;
       }
 
-      // Solicita permissão para tocar o som
-      requestAudioPermission().then(() => {
-        clearInterval(countdownInterval);
-        countdownDate = selectedDate;
+      clearInterval(countdownInterval);
+      countdownDate = selectedDate;
 
-        const alarmSound = document.getElementById('alarm-sound');
-        alarmSound.src = 'contagem.mp3'; // Usa o áudio local como padrão
-
-        updateCountdown();
-        countdownInterval = setInterval(updateCountdown, 1000);
-      }).catch(() => {
-        alert('Permissão para tocar o som foi negada. O alarme não funcionará.');
-      });
+      updateCountdown();
+      countdownInterval = setInterval(updateCountdown, 1000);
     }
 
     // Função para salvar a contagem regressiva
