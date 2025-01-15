@@ -76,7 +76,8 @@
     .buttons-container {
       margin-top: 20px;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       gap: 10px;
       flex-wrap: wrap;
     }
@@ -94,12 +95,10 @@
       transform: scale(1.05);
     }
     .permission-buttons {
-      position: absolute;
-      top: 20px;
-      right: 20px;
       display: flex;
-      flex-direction: column;
       gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
     .permission-buttons button {
       padding: 8px 16px;
@@ -138,18 +137,41 @@
       position: absolute;
       top: 20px;
       right: 20px;
-      background-color: #007bff;
+      background-color: transparent;
       color: white;
-      padding: 10px 20px;
       border: none;
-      border-radius: 5px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      font-size: 1.5rem;
       z-index: 10;
-      font-weight: 400;
+      transition: opacity 0.3s;
     }
     .menu-button:hover {
-      background-color: #0056b3;
+      opacity: 0.8;
+    }
+    .dropdown-menu {
+      position: absolute;
+      top: 50px;
+      right: 20px;
+      background-color: #333;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 10px;
+      z-index: 10;
+    }
+    .dropdown-menu button {
+      background-color: transparent;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .dropdown-menu button:hover {
+      background-color: #444;
     }
     @media (max-width: 600px) {
       .clock {
@@ -157,12 +179,6 @@
       }
       .date {
         font-size: 1rem;
-      }
-      .menu-button {
-        top: 10px;
-        right: 10px;
-        padding: 8px 16px;
-        font-size: 0.9rem;
       }
       .buttons-container button {
         padding: 8px 16px;
@@ -191,18 +207,14 @@
   </div>
 
   <div class="container">
-    <!-- Botão de clima -->
-    <button class="menu-button" onclick="window.location.href = 'clima.html';">Clima</button>
-    <!-- Botão de configurações -->
-    <button class="menu-button" onclick="window.location.href = 'configuracoes.html';" style="right: 120px;">Configurações</button>
-    <!-- Botão de testes -->
-    <button class="menu-button" onclick="window.location.href = 'testes.html';" style="right: 240px;">Testes</button>
+    <!-- Botão de menu -->
+    <button class="menu-button" onclick="toggleDropdown()">•••</button>
 
-    <!-- Botões de permissão -->
-    <div class="permission-buttons" id="permission-buttons">
-      <button id="allow-notifications" style="background-color: #28a745;">Permitir Notificações</button>
-      <button id="allow-vibration" style="background-color: #ffc107;">Permitir Vibrar</button>
-      <button id="allow-lock-screen" style="background-color: #6f42c1;">Alerta na Tela de Bloqueio</button>
+    <!-- Menu suspenso -->
+    <div class="dropdown-menu" id="dropdown-menu">
+      <button onclick="window.location.href = 'clima.html';">Clima</button>
+      <button onclick="window.location.href = 'configuracoes.html';">Configurações</button>
+      <button onclick="window.location.href = 'testes.html';">Testes</button>
     </div>
 
     <!-- Relógio -->
@@ -238,6 +250,13 @@
       <button onclick="enableSound()" style="background-color: #ffc107; color: black;">Habilitar Som</button>
       <button onclick="startCountdown()" style="background-color: #28a745; color: white;">Iniciar</button>
       <button onclick="saveCountdown()" style="background-color: #007bff; color: white;">Salvar</button>
+
+      <!-- Botões de permissão -->
+      <div class="permission-buttons" id="permission-buttons">
+        <button id="allow-notifications" style="background-color: #28a745;">Permitir Notificações</button>
+        <button id="allow-vibration" style="background-color: #ffc107;">Permitir Vibrar</button>
+        <button id="allow-lock-screen" style="background-color: #6f42c1;">Alerta na Tela de Bloqueio</button>
+      </div>
     </div>
   </div>
 
@@ -249,6 +268,21 @@
 
   <script>
     const permissionsKey = 'permissions'; // Chave para armazenar permissões
+
+    // Função para alternar o menu suspenso
+    function toggleDropdown() {
+      const dropdownMenu = document.getElementById('dropdown-menu');
+      dropdownMenu.style.display = dropdownMenu.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // Fechar o menu ao clicar fora dele
+    document.addEventListener('click', (event) => {
+      const dropdownMenu = document.getElementById('dropdown-menu');
+      const menuButton = document.querySelector('.menu-button');
+      if (!menuButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+        dropdownMenu.style.display = 'none';
+      }
+    });
 
     // Função para atualizar o relógio
     function updateClock() {
