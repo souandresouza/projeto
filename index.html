@@ -78,6 +78,7 @@
       display: flex;
       justify-content: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
     .buttons-container button {
       padding: 10px 20px;
@@ -85,11 +86,32 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      transition: opacity 0.3s;
+      transition: opacity 0.3s, transform 0.3s;
       font-weight: 400;
     }
     .buttons-container button:hover {
       opacity: 0.9;
+      transform: scale(1.05);
+    }
+    .permission-buttons {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .permission-buttons button {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .permission-buttons button:hover {
+      opacity: 0.9;
+      transform: scale(1.05);
     }
     #timeout-message {
       position: fixed;
@@ -171,6 +193,17 @@
   <div class="container">
     <!-- Botão de clima -->
     <button class="menu-button" onclick="window.location.href = 'clima.html';">Clima</button>
+    <!-- Botão de configurações -->
+    <button class="menu-button" onclick="window.location.href = 'configuracoes.html';" style="right: 120px;">Configurações</button>
+    <!-- Botão de testes -->
+    <button class="menu-button" onclick="window.location.href = 'testes.html';" style="right: 240px;">Testes</button>
+
+    <!-- Botões de permissão -->
+    <div class="permission-buttons" id="permission-buttons">
+      <button id="allow-notifications" style="background-color: #28a745;">Permitir Notificações</button>
+      <button id="allow-vibration" style="background-color: #ffc107;">Permitir Vibrar</button>
+      <button id="allow-lock-screen" style="background-color: #6f42c1;">Alerta na Tela de Bloqueio</button>
+    </div>
 
     <!-- Relógio -->
     <div class="clock" id="current-time">--:--:--</div>
@@ -215,6 +248,8 @@
   </audio>
 
   <script>
+    const permissionsKey = 'permissions'; // Chave para armazenar permissões
+
     // Função para atualizar o relógio
     function updateClock() {
       const now = new Date();
@@ -241,22 +276,75 @@
     // Função para habilitar o som
     function enableSound() {
       const alarmSound = document.getElementById('alarm-sound');
-      alarmSound.play()
-        .then(() => {
-          alarmSound.pause(); // Pausa o som após a permissão ser concedida
-          alarmSound.currentTime = 0; // Reinicia o áudio
-          alert('Som habilitado! Agora o alarme funcionará corretamente.');
-        })
-        .catch((error) => {
-          alert('Erro ao habilitar o som. Certifique-se de permitir a reprodução de áudio.');
-          console.error('Erro ao habilitar o som:', error);
+      alarmSound.play().then(() => {
+        alarmSound.pause();
+        alarmSound.currentTime = 0;
+        alert('Som habilitado com sucesso!');
+      }).catch((error) => {
+        alert('Erro ao habilitar o som. Verifique as permissões do navegador.');
+      });
+    }
+
+    // Função para permitir notificações
+    document.getElementById('allow-notifications').addEventListener('click', () => {
+      if ('Notification' in window) {
+        Notification.requestPermission().then((permission) => {
+          if (permission === 'granted') {
+            alert('Notificações permitidas!');
+            savePermission('notifications', true);
+            document.getElementById('allow-notifications').style.display = 'none';
+          } else {
+            alert('Permissão para notificações negada.');
+          }
         });
+      } else {
+        alert('Seu navegador não suporta notificações.');
+      }
+    });
+
+    // Função para permitir vibração
+    document.getElementById('allow-vibration').addEventListener('click', () => {
+      if ('vibrate' in navigator) {
+        navigator.vibrate(200); // Testa a vibração
+        alert('Vibração permitida!');
+        savePermission('vibration', true);
+        document.getElementById('allow-vibration').style.display = 'none';
+      } else {
+        alert('Seu dispositivo não suporta vibração.');
+      }
+    });
+
+    // Função para alerta na tela de bloqueio
+    document.getElementById('allow-lock-screen').addEventListener('click', () => {
+      alert('Para receber alertas na tela de bloqueio, habilite as notificações nas configurações do seu dispositivo.');
+      savePermission('lockScreen', true);
+      document.getElementById('allow-lock-screen').style.display = 'none';
+    });
+
+    // Função para salvar permissões no localStorage
+    function savePermission(key, value) {
+      const permissions = JSON.parse(localStorage.getItem(permissionsKey)) || {};
+      permissions[key] = value;
+      localStorage.setItem(permissionsKey, JSON.stringify(permissions));
+    }
+
+    // Função para carregar permissões salvas
+    function loadPermissions() {
+      const permissions = JSON.parse(localStorage.getItem(permissionsKey)) || {};
+      if (permissions.notifications) {
+        document.getElementById('allow-notifications').style.display = 'none';
+      }
+      if (permissions.vibration) {
+        document.getElementById('allow-vibration').style.display = 'none';
+      }
+      if (permissions.lockScreen) {
+        document.getElementById('allow-lock-screen').style.display = 'none';
+      }
     }
 
     // Função para iniciar a contagem regressiva
     function startCountdown() {
       const datetimeInput = document.getElementById('datetime').value;
-
       if (!datetimeInput) {
         alert('Por favor, insira uma data e hora válida.');
         return;
@@ -357,8 +445,11 @@
       }, 5000);
     }
 
-    // Carrega a contagem regressiva salva ao carregar a página
-    window.onload = loadSavedCountdown;
+    // Carrega a contagem regressiva e permissões salvas ao carregar a página
+    window.onload = () => {
+      loadSavedCountdown();
+      loadPermissions();
+    };
   </script>
 </body>
 </html>
