@@ -32,13 +32,6 @@
       align-items: center;
       min-height: 100vh;
       text-align: center;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    /* Tema Claro */
-    body.light-theme {
-      background-color: #f9f9f9;
-      color: #333; /* Texto escuro no tema claro */
     }
 
     /* Container Principal */
@@ -62,10 +55,6 @@
       color: #e0e0e0;
     }
 
-    body.light-theme .menu-icon {
-      color: #333;
-    }
-
     .menu-dropdown {
       display: none;
       position: absolute;
@@ -74,10 +63,6 @@
       border-radius: 5px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       z-index: 1000;
-    }
-
-    body.light-theme .menu-dropdown {
-      background-color: #fff;
     }
 
     .menu-dropdown button {
@@ -93,16 +78,8 @@
       transition: background-color 0.3s;
     }
 
-    body.light-theme .menu-dropdown button {
-      color: #333;
-    }
-
     .menu-dropdown button:hover {
       background-color: #444;
-    }
-
-    body.light-theme .menu-dropdown button:hover {
-      background-color: #f0f0f0;
     }
 
     /* Relógio */
@@ -117,18 +94,10 @@
       margin: 0;
     }
 
-    body.light-theme #current-time {
-      color: #333; /* Texto escuro no tema claro */
-    }
-
     #current-date {
       font-size: 1.5rem;
       color: #666; /* Cinza médio */
       margin-top: 10px;
-    }
-
-    body.light-theme #current-date {
-      color: #666; /* Mantém o cinza médio no tema claro */
     }
 
     /* Contador Regressivo */
@@ -153,17 +122,26 @@
       color: #ffffff; /* Texto claro no tema escuro */
     }
 
-    body.light-theme .countdown-item span {
-      color: #333; /* Texto escuro no tema claro */
-    }
-
     .countdown-item label {
       font-size: 1rem;
       color: #666; /* Cinza médio */
     }
 
-    body.light-theme .countdown-item label {
-      color: #666; /* Mantém o cinza médio no tema claro */
+    /* Barra de Progresso */
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background-color: #444;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    .progress {
+      height: 100%;
+      background-color: #8b0000;
+      width: 0%;
+      transition: width 1s linear;
     }
 
     /* Input e Botões */
@@ -180,13 +158,6 @@
       max-width: 300px;
       background-color: #333;
       color: #e0e0e0;
-      transition: background-color 0.3s, border-color 0.3s, color 0.3s;
-    }
-
-    body.light-theme .datetime-input {
-      background-color: #fff;
-      border-color: #ccc;
-      color: #333;
     }
 
     .buttons-container {
@@ -204,11 +175,13 @@
       color: white;
       font-size: 1rem;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
     }
 
     .buttons-container button:hover {
       background-color: #6b0000;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
     }
 
     /* Mensagem de Tempo Esgotado */
@@ -219,10 +192,6 @@
       display: none;
     }
 
-    body.light-theme #timeout-message {
-      color: #333; /* Texto escuro no tema claro */
-    }
-
     #timeout-message button {
       margin-top: 10px;
       padding: 10px 20px;
@@ -231,6 +200,14 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+    }
+
+    /* Frase de Permissões */
+    #permissions-message {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #bbb;
+      display: none; /* Inicialmente oculta */
     }
 
     /* Responsividade */
@@ -250,12 +227,6 @@
       .countdown-item label {
         font-size: 0.9rem;
       }
-
-      /* Esconde os botões originais no mobile */
-      .theme-toggle,
-      .permissions-button {
-        display: none;
-      }
     }
 
     /* Animação de piscar */
@@ -268,15 +239,25 @@
       animation: blink 0.5s linear 3;
     }
   </style>
+  <script>
+    // Aplica o tema ao carregar a página
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+      } else {
+        document.body.classList.remove('dark-theme');
+      }
+    });
+  </script>
 </head>
 <body>
   <!-- Menu Suspenso -->
   <div class="menu-container">
     <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
     <div class="menu-dropdown" id="menu-dropdown">
-      <button onclick="toggleTheme()">Alternar Tema</button>
-      <button onclick="window.location.href='pages/configuracoes.html'">Permissões</button>
       <button onclick="window.location.href='pages/clima.html'">Clima</button>
+      <button onclick="window.location.href='pages/configuracoes.html'">Permissões</button>
     </div>
   </div>
 
@@ -307,13 +288,20 @@
           <label id="seconds-label">Segundos</label>
         </div>
       </div>
+      <!-- Barra de Progresso -->
+      <div class="progress-bar">
+        <div id="progress" class="progress"></div>
+      </div>
       <div class="input-container">
         <input type="datetime-local" id="datetime" class="datetime-input" />
       </div>
       <div class="buttons-container">
         <button id="start-countdown" onclick="startCountdown()">Iniciar</button>
         <button onclick="saveCountdown()">Salvar</button>
-        <button onclick="resetCountdown()">Reiniciar</button>
+      </div>
+      <!-- Frase de Permissões -->
+      <div id="permissions-message">
+        Antes de iniciar a contagem, verifique as permissões no menu suspenso (☰) no canto superior direito da tela.
       </div>
     </div>
 
@@ -346,11 +334,6 @@
         }
       }
     };
-
-    // Função para alternar entre temas dark e claro
-    function toggleTheme() {
-      document.body.classList.toggle('light-theme');
-    }
 
     // Função para formatar a data no formato desejado
     function formatDate(date) {
@@ -404,6 +387,12 @@
     }
 
     // Funções do Contador Regressivo
+    function isValidDateTime(dateTime) {
+      const now = new Date();
+      const targetDate = new Date(dateTime);
+      return targetDate > now && !isNaN(targetDate.getTime());
+    }
+
     function updateCountdown(targetDate) {
       const now = new Date().getTime();
       const distance = targetDate - now;
@@ -411,6 +400,7 @@
       if (distance < 0) {
         clearInterval(countdownInterval);
         document.getElementById('timeout-message').style.display = 'block'; // Exibe a mensagem
+        showNotification(); // Mostra notificação
         return;
       }
 
@@ -423,19 +413,21 @@
       document.getElementById('hours').textContent = hours;
       document.getElementById('minutes').textContent = minutes;
       document.getElementById('seconds').textContent = seconds;
+
+      updateProgressBar(distance, targetDate - new Date(document.getElementById('datetime').value).getTime());
+    }
+
+    function updateProgressBar(distance, totalDistance) {
+      const progress = (1 - distance / totalDistance) * 100;
+      document.getElementById('progress').style.width = `${progress}%`;
     }
 
     function startCountdown() {
       const targetDate = new Date(document.getElementById('datetime').value).getTime();
       const now = new Date().getTime();
 
-      if (!targetDate) {
-        alert('Por favor, insira uma data e hora válida.');
-        return;
-      }
-
-      if (targetDate <= now) {
-        alert('Por favor, insira uma data futura.');
+      if (!isValidDateTime(document.getElementById('datetime').value)) {
+        alert('Por favor, insira uma data e hora válida e futura.');
         return;
       }
 
@@ -471,12 +463,32 @@
       document.getElementById('minutes').textContent = '0';
       document.getElementById('seconds').textContent = '0';
       document.getElementById('timeout-message').style.display = 'none'; // Oculta a mensagem
+      document.getElementById('progress').style.width = '0%'; // Reseta a barra de progresso
       localStorage.removeItem(countdownKey); // Remove a data/hora salva
+    }
+
+    // Notificações Push
+    function showNotification() {
+      if (Notification.permission === 'granted') {
+        new Notification('Tempo Esgotado!', {
+          body: 'A contagem regressiva chegou ao fim.',
+          icon: 'assets/icons/icon-192x192.png',
+        });
+      }
     }
 
     // Inicializa o relógio e carrega a contagem regressiva salva
     initializeClock();
     loadCountdown();
+
+    // Verifica as permissões ao carregar a página
+    const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
+    const permissionsMessage = document.getElementById('permissions-message');
+    if (!permissions.notifications || !permissions.notificationSound || !permissions.vibration) {
+      permissionsMessage.style.display = 'block'; // Exibe a mensagem
+    } else {
+      permissionsMessage.style.display = 'none'; // Oculta a mensagem
+    }
   </script>
 </body>
 </html>
