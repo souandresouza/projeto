@@ -4,14 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Clima</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="description" content="CountClock: Informações do clima em tempo real.">
+  <meta name="author" content="Seu Nome">
+  <meta name="keywords" content="clima, tempo, previsão do tempo, PWA">
+  <title>Clima - CountClock</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="../assets/icons/favicon-32x32.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/icons/icon-192x192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     /* Estilos anteriores... */
   </style>
 </head>
 <body>
+  <!-- Botão de Alternar Tema -->
+  <button class="theme-toggle" onclick="toggleTheme()">Alternar Tema</button>
+
+  <!-- Botão de Voltar -->
+  <button class="back-button" onclick="window.location.href = '../index.html';">Voltar ao CountClock</button>
+
   <div class="container">
+    <!-- Informações do Clima -->
     <div class="weather-info" id="weather-info">
       <h1>Informações do Clima</h1>
       <img class="weather-icon" id="weather-icon" src="" alt="Ícone do clima">
@@ -25,9 +38,13 @@
       <p id="weather-sunset">Pôr do Sol: Carregando...</p>
       <button class="favorite-button" id="favorite-button" onclick="toggleFavorite()">Adicionar aos Favoritos</button>
     </div>
+
+    <!-- Mensagem de Localização -->
     <p class="location-message" id="location-message">
       Insira seu CEP ou o nome da cidade para exibir as informações do clima.
     </p>
+
+    <!-- Inputs e Botões -->
     <div class="input-container" id="input-container">
       <label for="location-input">CEP ou Cidade:</label>
       <input type="text" id="location-input" placeholder="Digite seu CEP ou cidade">
@@ -45,23 +62,34 @@
       <button onclick="fetchWeather()">Buscar Clima</button>
       <button class="geo-button" onclick="fetchWeatherByGeolocation()">Usar Minha Localização</button>
     </div>
+
+    <!-- Pesquisas Recentes -->
     <div class="recent-searches" id="recent-searches">
       <h2>Pesquisas Recentes</h2>
       <ul id="recent-searches-list"></ul>
       <button class="clear-recent" onclick="clearRecentSearches()">Limpar Pesquisas Recentes</button>
     </div>
+
+    <!-- Favoritos -->
     <div class="favorites-list" id="favorites-list">
       <h2>Favoritos</h2>
       <ul id="favorites-list-items"></ul>
     </div>
+
+    <!-- Mensagem de Carregamento -->
     <p class="loading" id="loading">Carregando...</p>
-    <button class="back-button" onclick="window.location.href = 'index.html';">Voltar ao CountClock</button>
   </div>
 
   <script>
+    // Código JavaScript do clima.html (mantido igual)
     const apiKey = 'e7314838ebd86431d951d53c59e7fd20'; // Chave da API OpenWeatherMap
     const recentSearchesKey = 'recentSearches'; // Chave para armazenar pesquisas recentes
     const favoritesKey = 'favorites'; // Chave para armazenar favoritos
+
+    // Função para alternar entre temas dark e claro
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+    }
 
     // Função para converter graus em direção do vento
     function getWindDirection(degrees) {
