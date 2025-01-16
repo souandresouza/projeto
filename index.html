@@ -228,28 +228,7 @@
         font-size: 0.9rem;
       }
     }
-
-    /* Animação de piscar */
-    @keyframes blink {
-      0% { background-color: #ff4444; }
-      50% { background-color: #1a1a1a; }
-      100% { background-color: #ff4444; }
-    }
-    .blink {
-      animation: blink 0.5s linear 3;
-    }
   </style>
-  <script>
-    // Aplica o tema ao carregar a página
-    document.addEventListener('DOMContentLoaded', () => {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'dark') {
-        document.body.classList.add('dark-theme');
-      } else {
-        document.body.classList.remove('dark-theme');
-      }
-    });
-  </script>
 </head>
 <body>
   <!-- Menu Suspenso -->
@@ -317,6 +296,7 @@
     // Variáveis globais
     let clockInterval;
     let countdownInterval;
+    let startDate; // Armazena o tempo inicial do contador
     const countdownKey = 'countdownTarget'; // Chave para armazenar a data/hora alvo
 
     // Função para alternar o menu suspenso
@@ -414,17 +394,17 @@
       document.getElementById('minutes').textContent = minutes;
       document.getElementById('seconds').textContent = seconds;
 
-      updateProgressBar(distance, targetDate - new Date(document.getElementById('datetime').value).getTime());
+      updateProgressBar(distance, targetDate - startDate); // Usa startDate para calcular o tempo total
     }
 
     function updateProgressBar(distance, totalDistance) {
-      const progress = (1 - distance / totalDistance) * 100;
-      document.getElementById('progress').style.width = `${progress}%`;
+      const progress = ((totalDistance - distance) / totalDistance) * 100; // Calcula a porcentagem do tempo que já passou
+      document.getElementById('progress').style.width = `${progress}%`; // Atualiza a largura da barra
     }
 
     function startCountdown() {
       const targetDate = new Date(document.getElementById('datetime').value).getTime();
-      const now = new Date().getTime();
+      startDate = new Date().getTime(); // Define o tempo inicial
 
       if (!isValidDateTime(document.getElementById('datetime').value)) {
         alert('Por favor, insira uma data e hora válida e futura.');
