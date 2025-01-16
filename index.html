@@ -5,35 +5,263 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="description" content="CountClock: Um relógio e contador regressivo com funcionalidades de clima, notificações e muito mais.">
-  <meta name="author" content="souzaandre">
+  <meta name="author" content="Seu Nome">
   <meta name="keywords" content="relógio, contador regressivo, clima, PWA, notificações">
   <title>CountClock</title>
-
-  <!-- Links para os arquivos CSS -->
   <link rel="manifest" href="/manifest.json">
-  <link rel="stylesheet" href="styles/global.css">
-  <link rel="stylesheet" href="styles/clock.css">
-  <link rel="stylesheet" href="styles/countdown.css">
   <link rel="icon" href="assets/icons/favicon-32x32.png" type="image/png">
   <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Reset CSS */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Estilos Globais */
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #1a1a1a; /* Fundo escuro padrão */
+      color: #e0e0e0; /* Texto claro */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Tema Claro */
+    body.light-theme {
+      background-color: #f9f9f9;
+      color: #333; /* Texto escuro no tema claro */
+    }
+
+    /* Container Principal */
+    .container {
+      max-width: 800px;
+      width: 100%;
+      padding: 20px;
+    }
+
+    /* Botão de Alternar Tema */
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #8b0000;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+    }
+
+    .theme-toggle:hover {
+      background-color: #6b0000;
+    }
+
+    /* Botão de Permissões */
+    .permissions-button {
+      position: absolute;
+      top: 70px; /* Abaixo do botão "Alternar Tema" */
+      right: 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+    }
+
+    .permissions-button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Relógio */
+    #clock-container {
+      margin-bottom: 40px;
+    }
+
+    #current-time {
+      font-size: 6rem;
+      font-weight: bold;
+      color: #e0e0e0; /* Texto claro no tema escuro */
+      margin: 0;
+    }
+
+    body.light-theme #current-time {
+      color: #333; /* Texto escuro no tema claro */
+    }
+
+    #current-date {
+      font-size: 1.5rem;
+      color: #666; /* Cinza médio */
+      margin-top: 10px;
+    }
+
+    body.light-theme #current-date {
+      color: #666; /* Mantém o cinza médio no tema claro */
+    }
+
+    /* Contador Regressivo */
+    #countdown-container {
+      margin-top: 30px;
+    }
+
+    .countdown-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .countdown-item {
+      text-align: center;
+    }
+
+    .countdown-item span {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #ffffff; /* Texto claro no tema escuro */
+    }
+
+    body.light-theme .countdown-item span {
+      color: #333; /* Texto escuro no tema claro */
+    }
+
+    .countdown-item label {
+      font-size: 1rem;
+      color: #666; /* Cinza médio */
+    }
+
+    body.light-theme .countdown-item label {
+      color: #666; /* Mantém o cinza médio no tema claro */
+    }
+
+    /* Input e Botões */
+    .input-container {
+      margin: 20px 0;
+    }
+
+    .datetime-input {
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #444;
+      border-radius: 5px;
+      width: 100%;
+      max-width: 300px;
+      background-color: #333;
+      color: #e0e0e0;
+      transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    }
+
+    body.light-theme .datetime-input {
+      background-color: #fff;
+      border-color: #ccc;
+      color: #333;
+    }
+
+    .buttons-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .buttons-container button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #8b0000;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .buttons-container button:hover {
+      background-color: #6b0000;
+    }
+
+    /* Mensagem de Tempo Esgotado */
+    #timeout-message {
+      margin-top: 20px;
+      font-size: 1.5rem;
+      color: #e0e0e0;
+      display: none;
+    }
+
+    body.light-theme #timeout-message {
+      color: #333; /* Texto escuro no tema claro */
+    }
+
+    #timeout-message button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #8b0000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* Responsividade */
+    @media (max-width: 600px) {
+      #current-time {
+        font-size: 4rem;
+      }
+
+      #current-date {
+        font-size: 1.2rem;
+      }
+
+      .countdown-item span {
+        font-size: 2rem;
+      }
+
+      .countdown-item label {
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Animação de piscar */
+    @keyframes blink {
+      0% { background-color: #ff4444; }
+      50% { background-color: #1a1a1a; }
+      100% { background-color: #ff4444; }
+    }
+    .blink {
+      animation: blink 0.5s linear 3;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>CountClock</h1>
-    <button class="menu-button" onclick="toggleDropdown()" aria-label="Abrir menu">•••</button>
-    <div class="dropdown-menu" id="dropdown-menu" aria-hidden="true">
-      <button onclick="window.location.href = 'pages/clima.html';" aria-label="Ir para a página do clima">Clima</button>
-      <button onclick="window.location.href = 'pages/configuracoes.html';" aria-label="Ir para a página de configurações">Configurações</button>
-      <button onclick="window.location.href = 'pages/testes.html';" aria-label="Ir para a página de testes">Testes</button>
-    </div>
-  </header>
+  <!-- Botão de Alternar Tema -->
+  <button class="theme-toggle" onclick="toggleTheme()">Alternar Tema</button>
 
-  <main>
+  <!-- Botão de Permissões -->
+  <button class="permissions-button" onclick="window.location.href='pages/configuracoes.html'">Permissões</button>
+
+  <!-- Botão de Clima -->
+  <button class="permissions-button" style="top: 120px;" onclick="window.location.href='pages/clima.html'">Clima</button>
+
+  <div class="container">
+    <!-- Relógio -->
     <div id="clock-container">
       <div class="clock" id="current-time">--:--:--</div>
       <div class="date" id="current-date">Carregando...</div>
     </div>
 
+    <!-- Contador Regressivo -->
     <div id="countdown-container">
       <div class="countdown-container">
         <div class="countdown-item">
@@ -57,48 +285,156 @@
         <input type="datetime-local" id="datetime" class="datetime-input" />
       </div>
       <div class="buttons-container">
-        <button id="enable-sound" onclick="enableSound()" style="background-color: #ffc107; color: black;">Habilitar Som</button>
-        <button onclick="startCountdown()" style="background-color: #28a745; color: white;">Iniciar</button>
-        <button onclick="saveCountdown()" style="background-color: #007bff; color: white;">Salvar</button>
-        <button onclick="resetCountdown()" style="background-color: #6c757d; color: white;">Reiniciar</button>
+        <button id="start-countdown" onclick="startCountdown()">Iniciar</button>
+        <button onclick="saveCountdown()">Salvar</button>
+        <button onclick="resetCountdown()">Reiniciar</button>
       </div>
     </div>
 
+    <!-- Mensagem de Tempo Esgotado -->
     <div id="timeout-message">
       Tempo Esgotado!
       <button onclick="resetCountdown()">Reiniciar</button>
     </div>
+  </div>
 
-    <div id="weather-container">
-      <h2>Clima</h2>
-      <p id="weather-location">Localização: --</p>
-      <p id="weather-temp">Temperatura: --°C</p>
-      <p id="weather-condition">Condição: --</p>
-      <img id="weather-icon" src="" alt="Ícone do clima" style="width: 50px; height: 50px;">
-      <input type="text" id="city-input" placeholder="Digite o nome da cidade">
-      <button id="fetch-weather">Buscar Clima</button>
-    </div>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 CountClock. Todos os direitos reservados.</p>
-  </footer>
-
-  <audio id="alarm-sound">
-    <source src="assets/sounds/contagem.mp3" type="audio/mpeg">
-    Seu navegador não suporta o elemento de áudio.
-  </audio>
-
+  <!-- Código JavaScript -->
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then((registration) => {
-          console.log('Service Worker registrado com sucesso:', registration);
-        })
-        .catch((error) => {
-          console.log('Falha ao registrar Service Worker:', error);
-        });
+    // Variáveis globais
+    let clockInterval;
+    let countdownInterval;
+    const countdownKey = 'countdownTarget'; // Chave para armazenar a data/hora alvo
+
+    // Função para alternar entre temas dark e claro
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
     }
+
+    // Função para formatar a data no formato desejado
+    function formatDate(date) {
+      const daysOfWeek = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+      const months = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+
+      const dayOfWeek = daysOfWeek[date.getDay()];
+      const dayOfMonth = date.getDate();
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+
+      // Calcula o dia do ano
+      const startOfYear = new Date(date.getFullYear(), 0, 0);
+      const diff = date - startOfYear;
+      const oneDay = 1000 * 60 * 60 * 24;
+      const dayOfYear = Math.floor(diff / oneDay);
+
+      return `${dayOfWeek}, ${dayOfMonth} de ${month} de ${year}.<br>O ${dayOfYear}º dia do ano.`;
+    }
+
+    // Funções do Relógio
+    function formatTime(date) {
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+      return `${hours}:${minutes}:${seconds}`;
+    }
+
+    let lastTime = '';
+    let lastDate = '';
+
+    function updateClock() {
+      const now = new Date();
+      const time = formatTime(now);
+      const date = formatDate(now);
+
+      if (time !== lastTime) {
+        document.getElementById('current-time').textContent = time;
+        lastTime = time;
+      }
+
+      if (date !== lastDate) {
+        document.getElementById('current-date').innerHTML = date; // Usamos innerHTML para renderizar a quebra de linha
+        lastDate = date;
+      }
+    }
+
+    function initializeClock() {
+      updateClock(); // Atualiza imediatamente
+      clockInterval = setInterval(updateClock, 1000); // Armazena o ID do intervalo
+    }
+
+    // Funções do Contador Regressivo
+    function updateCountdown(targetDate) {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance < 0) {
+        clearInterval(countdownInterval);
+        document.getElementById('timeout-message').style.display = 'block'; // Exibe a mensagem
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById('days').textContent = days;
+      document.getElementById('hours').textContent = hours;
+      document.getElementById('minutes').textContent = minutes;
+      document.getElementById('seconds').textContent = seconds;
+    }
+
+    function startCountdown() {
+      const targetDate = new Date(document.getElementById('datetime').value).getTime();
+      const now = new Date().getTime();
+
+      if (!targetDate) {
+        alert('Por favor, insira uma data e hora válida.');
+        return;
+      }
+
+      if (targetDate <= now) {
+        alert('Por favor, insira uma data futura.');
+        return;
+      }
+
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => updateCountdown(targetDate), 1000);
+    }
+
+    // Função para salvar a data/hora alvo no localStorage
+    function saveCountdown() {
+      const targetDate = document.getElementById('datetime').value;
+      if (!targetDate) {
+        alert('Por favor, insira uma data/hora válida.');
+        return;
+      }
+
+      localStorage.setItem(countdownKey, targetDate);
+      alert('Contagem regressiva salva com sucesso!');
+    }
+
+    // Função para carregar a data/hora alvo salva
+    function loadCountdown() {
+      const savedTargetDate = localStorage.getItem(countdownKey);
+      if (savedTargetDate) {
+        document.getElementById('datetime').value = savedTargetDate;
+        startCountdown(); // Inicia a contagem regressiva automaticamente
+      }
+    }
+
+    function resetCountdown() {
+      clearInterval(countdownInterval);
+      document.getElementById('days').textContent = '0';
+      document.getElementById('hours').textContent = '0';
+      document.getElementById('minutes').textContent = '0';
+      document.getElementById('seconds').textContent = '0';
+      document.getElementById('timeout-message').style.display = 'none'; // Oculta a mensagem
+      localStorage.removeItem(countdownKey); // Remove a data/hora salva
+    }
+
+    // Inicializa o relógio e carrega a contagem regressiva salva
+    initializeClock();
+    loadCountdown();
   </script>
 </body>
 </html>
