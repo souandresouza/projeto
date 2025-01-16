@@ -1,20 +1,48 @@
 {
-  "name": "CountClock PWA",
   "short_name": "CountClock",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#1a1a1a",
-  "theme_color": "#1a1a1a",
+  "name": "CountClock - Relógio e Contagem Regressiva",
+  "description": "Um aplicativo para exibir o horário atual e definir contagens regressivas.",
   "icons": [
     {
-      "src": "icons/icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "src": "/assets/icons/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
     },
     {
-      "src": "icons/icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "/assets/icons/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/index.html",
+  "background_color": "#1a1a1a",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#007bff",
+  "shortcuts": [
+    {
+      "name": "Clima",
+      "short_name": "Clima",
+      "description": "Ver a previsão do tempo",
+      "url": "/pages/clima.html",
+      "icons": [
+        {
+          "src": "/assets/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Configurações",
+      "short_name": "Config",
+      "description": "Ajustar configurações do aplicativo",
+      "url": "/pages/configuracoes.html",
+      "icons": [
+        {
+          "src": "/assets/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }
