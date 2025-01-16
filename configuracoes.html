@@ -64,6 +64,10 @@
       <label for="lockScreen">Alerta na Tela de Bloqueio</label>
       <input type="checkbox" id="lockScreen" onchange="togglePermission('lockScreen')">
     </div>
+    <div class="settings-item">
+      <label for="sound">Permitir Som</label>
+      <input type="checkbox" id="sound" onchange="togglePermission('sound')">
+    </div>
     <button class="back-button" onclick="window.location.href = 'index.html';">Voltar ao CountClock</button>
   </div>
 
@@ -76,6 +80,7 @@
       document.getElementById('notifications').checked = permissions.notifications || false;
       document.getElementById('vibration').checked = permissions.vibration || false;
       document.getElementById('lockScreen').checked = permissions.lockScreen || false;
+      document.getElementById('sound').checked = permissions.sound || false; // Carrega a permissão de som
     }
 
     // Função para alternar permissões
