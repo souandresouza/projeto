@@ -54,28 +54,43 @@
     <h1>Configurações</h1>
     <div class="settings-item">
       <label for="notifications">Permitir Notificações</label>
-      <input type="checkbox" id="notifications" onchange="togglePermission('notifications')">
+      <input type="checkbox" id="notifications" aria-describedby="notifications-help">
+      <small id="notifications-help">Receba notificações importantes.</small>
+    </div>
+    <div class="settings-item">
+      <label for="notificationSound">Som de Notificação</label>
+      <input type="checkbox" id="notificationSound" aria-describedby="notificationSound-help">
+      <small id="notificationSound-help">Ative para emitir som em notificações.</small>
     </div>
     <div class="settings-item">
       <label for="vibration">Permitir Vibrar</label>
-      <input type="checkbox" id="vibration" onchange="togglePermission('vibration')">
+      <input type="checkbox" id="vibration" aria-describedby="vibration-help">
+      <small id="vibration-help">Ative para receber feedback tátil.</small>
     </div>
     <div class="settings-item">
       <label for="lockScreen">Alerta na Tela de Bloqueio</label>
-      <input type="checkbox" id="lockScreen" onchange="togglePermission('lockScreen')">
+      <input type="checkbox" id="lockScreen" aria-describedby="lockScreen-help">
+      <small id="lockScreen-help">Exibir alertas mesmo com a tela bloqueada.</small>
     </div>
     <div class="settings-item">
       <label for="theme">Tema Escuro</label>
-      <input type="checkbox" id="theme" onchange="togglePermission('theme')">
+      <input type="checkbox" id="theme" aria-describedby="theme-help">
+      <small id="theme-help">Ative o modo escuro para melhorar a visibilidade.</small>
+    </div>
+    <div class="settings-item">
+      <label for="locationAccess">Compartilhar Localização</label>
+      <input type="checkbox" id="locationAccess" aria-describedby="locationAccess-help">
+      <small id="locationAccess-help">Permitir acesso à sua localização.</small>
     </div>
     <div class="settings-item">
       <label for="language">Idioma</label>
-      <select id="language" onchange="togglePermission('language')">
+      <select id="language" aria-describedby="language-help">
         <option value="pt-BR">Português (Brasil)</option>
         <option value="en-US">Inglês (EUA)</option>
       </select>
+      <small id="language-help">Selecione o idioma preferido.</small>
     </div>
-    <button class="back-button" onclick="window.location.href = 'index.html';">Voltar ao CountClock</button>
+    <button class="back-button" id="backButton">Voltar ao CountClock</button>
   </div>
 
   <script>
@@ -85,14 +100,20 @@
     function loadPermissions() {
       const permissions = JSON.parse(localStorage.getItem(permissionsKey)) || {};
       document.getElementById('notifications').checked = permissions.notifications || false;
+      document.getElementById('notificationSound').checked = permissions.notificationSound || false;
       document.getElementById('vibration').checked = permissions.vibration || false;
       document.getElementById('lockScreen').checked = permissions.lockScreen || false;
       document.getElementById('theme').checked = permissions.theme || false;
+      document.getElementById('locationAccess').checked = permissions.locationAccess || false;
       document.getElementById('language').value = permissions.language || 'pt-BR';
     }
 
     // Função para alternar permissões
-    function togglePermission(key) {
+    function togglePermission(event) {
+      const key = event.target.id;
+      const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+
+      // Verificações de suporte
       if (key === 'notifications' && !('Notification' in window)) {
         alert('Notificações não são suportadas pelo seu navegador.');
         return;
@@ -101,18 +122,49 @@
         alert('Vibração não é suportada pelo seu navegador.');
         return;
       }
+      if (key === 'locationAccess' && !('geolocation' in navigator)) {
+        alert('Acesso à localização não é suportado pelo seu navegador.');
+        return;
+      }
 
+      // Salva as permissões no localStorage
       const permissions = JSON.parse(localStorage.getItem(permissionsKey)) || {};
-      permissions[key] = key === 'language' ? document.getElementById(key).value : document.getElementById(key).checked;
+      permissions[key] = value;
       localStorage.setItem(permissionsKey, JSON.stringify(permissions));
 
+      // Exibe o status da permissão
       const status = permissions[key] ? 'habilitada' : 'desabilitada';
       console.log(`Permissão de ${key} atualizada: ${permissions[key]}`);
       alert(`Permissão de ${key} ${status}.`);
     }
 
-    // Carrega as permissões ao abrir a página
-    window.onload = loadPermissions;
+    // Função para aplicar o tema escuro/claro
+    function applyTheme() {
+      const theme = document.getElementById('theme').checked ? 'dark' : 'light';
+      document.body.style.backgroundColor = theme === 'dark' ? '#1a1a1a' : '#f9f9f9';
+      document.body.style.color = theme === 'dark' ? '#f9f9f9' : '#1a1a1a';
+    }
+
+    // Adiciona event listeners aos elementos
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('notifications').addEventListener('change', togglePermission);
+      document.getElementById('notificationSound').addEventListener('change', togglePermission);
+      document.getElementById('vibration').addEventListener('change', togglePermission);
+      document.getElementById('lockScreen').addEventListener('change', togglePermission);
+      document.getElementById('theme').addEventListener('change', () => {
+        togglePermission(event);
+        applyTheme();
+      });
+      document.getElementById('locationAccess').addEventListener('change', togglePermission);
+      document.getElementById('language').addEventListener('change', togglePermission);
+      document.getElementById('backButton').addEventListener('click', () => {
+        window.location.href = '../index.html'; // Caminho relativo para voltar ao index.html
+      });
+
+      // Carrega as permissões e aplica o tema ao abrir a página
+      loadPermissions();
+      applyTheme();
+    });
   </script>
 </body>
 </html>
