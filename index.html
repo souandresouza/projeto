@@ -75,11 +75,15 @@
     }
     .buttons-container {
       margin-top: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: grid;
+      grid-template-columns: 1fr;
       gap: 10px;
-      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
     }
     .buttons-container button {
       padding: 10px 20px;
@@ -96,9 +100,9 @@
     }
     .permission-buttons {
       display: flex;
+      flex-direction: column;
       gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
+      margin-top: 10px;
     }
     .permission-buttons button {
       padding: 8px 16px;
@@ -247,7 +251,7 @@
       <input type="datetime-local" id="datetime" class="datetime-input" />
     </div>
     <div class="buttons-container">
-      <button onclick="enableSound()" style="background-color: #ffc107; color: black;">Habilitar Som</button>
+      <button id="allow-sound" onclick="enableSound()" style="background-color: #ffc107; color: black;">Habilitar Som</button>
       <button onclick="startCountdown()" style="background-color: #28a745; color: white;">Iniciar</button>
       <button onclick="saveCountdown()" style="background-color: #007bff; color: white;">Salvar</button>
 
@@ -314,6 +318,8 @@
         alarmSound.pause();
         alarmSound.currentTime = 0;
         alert('Som habilitado com sucesso!');
+        savePermission('sound', true); // Registra a permissão no localStorage
+        document.getElementById('allow-sound').style.display = 'none'; // Oculta o botão
       }).catch((error) => {
         alert('Erro ao habilitar o som. Verifique as permissões do navegador.');
       });
@@ -373,6 +379,9 @@
       }
       if (permissions.lockScreen) {
         document.getElementById('allow-lock-screen').style.display = 'none';
+      }
+      if (permissions.sound) {
+        document.getElementById('allow-sound').style.display = 'none'; // Oculta o botão de som
       }
     }
 
