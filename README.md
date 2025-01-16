@@ -19,7 +19,7 @@ CountClock é um aplicativo web que combina um relógio em tempo real com uma co
 ## Como Usar
 
 1. **Acesse o Site**:
-   - Abra o navegador e acesse [CountClock](https://github.com/souandresouza/countclock).
+   - Abra o navegador e acesse [CountClock](https://souandresouza.github.io/projeto/index.html).
 
 2. **Relógio**:
    - A hora e a data atual são exibidas automaticamente.
