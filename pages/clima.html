@@ -48,42 +48,60 @@
       padding: 20px;
     }
 
-    /* Botão de Alternar Tema */
-    .theme-toggle {
+    /* Menu Suspenso */
+    .menu-container {
       position: absolute;
       top: 20px;
       right: 20px;
-      background-color: #8b0000;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
+    }
+
+    .menu-icon {
+      font-size: 1.5rem;
       cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.3s;
+      color: #e0e0e0;
     }
 
-    .theme-toggle:hover {
-      background-color: #6b0000;
+    body.light-theme .menu-icon {
+      color: #333;
     }
 
-    /* Botão de Voltar */
-    .back-button {
+    .menu-dropdown {
+      display: none;
       position: absolute;
-      top: 20px;
-      left: 20px;
-      background-color: #8b0000;
-      color: white;
-      border: none;
-      padding: 10px 20px;
+      right: 0;
+      background-color: #333;
       border-radius: 5px;
-      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+    }
+
+    body.light-theme .menu-dropdown {
+      background-color: #fff;
+    }
+
+    .menu-dropdown button {
+      display: block;
+      width: 100%;
+      padding: 10px 20px;
+      border: none;
+      background-color: transparent;
+      color: #e0e0e0;
       font-size: 1rem;
+      text-align: left;
+      cursor: pointer;
       transition: background-color 0.3s;
     }
 
-    .back-button:hover {
-      background-color: #6b0000;
+    body.light-theme .menu-dropdown button {
+      color: #333;
+    }
+
+    .menu-dropdown button:hover {
+      background-color: #444;
+    }
+
+    body.light-theme .menu-dropdown button:hover {
+      background-color: #f0f0f0;
     }
 
     /* Estilos do Clima */
@@ -234,14 +252,33 @@
     body.light-theme .loading {
       color: #333;
     }
+
+    /* Responsividade */
+    @media (max-width: 600px) {
+      .weather-info h1 {
+        font-size: 2rem;
+      }
+
+      .weather-info p {
+        font-size: 1rem;
+      }
+
+      .input-container input,
+      .input-container select {
+        max-width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Botão de Alternar Tema -->
-  <button class="theme-toggle" onclick="toggleTheme()">Alternar Tema</button>
-
-  <!-- Botão de Voltar -->
-  <button class="back-button" onclick="window.location.href = '../index.html';">Voltar ao CountClock</button>
+  <!-- Menu Suspenso -->
+  <div class="menu-container">
+    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    <div class="menu-dropdown" id="menu-dropdown">
+      <button onclick="window.location.href = '../index.html';">Voltar ao CountClock</button>
+      <button onclick="toggleTheme()">Alternar Tema</button>
+    </div>
+  </div>
 
   <div class="container">
     <!-- Informações do Clima -->
@@ -301,6 +338,22 @@
   </div>
 
   <script>
+    // Função para alternar o menu suspenso
+    function toggleMenu() {
+      const menuDropdown = document.getElementById('menu-dropdown');
+      menuDropdown.style.display = menuDropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Fechar o menu ao clicar fora dele
+    window.onclick = function (event) {
+      if (!event.target.matches('.menu-icon')) {
+        const menuDropdown = document.getElementById('menu-dropdown');
+        if (menuDropdown.style.display === 'block') {
+          menuDropdown.style.display = 'none';
+        }
+      }
+    };
+
     // Código JavaScript do clima.html (mantido igual)
     const apiKey = 'e7314838ebd86431d951d53c59e7fd20'; // Chave da API OpenWeatherMap
     const recentSearchesKey = 'recentSearches'; // Chave para armazenar pesquisas recentes
