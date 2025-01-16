@@ -8,30 +8,40 @@
   <meta name="author" content="Seu Nome">
   <meta name="keywords" content="relógio, contador regressivo, clima, PWA, notificações">
   <title>CountClock</title>
+
+  <!-- Manifesto do PWA -->
   <link rel="manifest" href="/manifest.json">
+
+  <!-- Folhas de estilo -->
   <link rel="stylesheet" href="styles/global.css">
   <link rel="stylesheet" href="styles/clock.css">
   <link rel="stylesheet" href="styles/countdown.css">
+
+  <!-- Ícones -->
   <link rel="icon" href="assets/icons/favicon-32x32.png" type="image/png">
   <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
 </head>
 <body>
   <header>
     <h1>CountClock</h1>
+    <!-- Botão do menu -->
     <button class="menu-button" onclick="toggleDropdown()" aria-label="Abrir menu">•••</button>
+    <!-- Menu dropdown -->
     <div class="dropdown-menu" id="dropdown-menu" aria-hidden="true">
-      <button onclick="window.location.href = 'pages/clima.html';" aria-label="Ir para a página do clima">Clima</button>
-      <button onclick="window.location.href = 'pages/configuracoes.html';" aria-label="Ir para a página de configurações">Configurações</button>
-      <button onclick="window.location.href = 'pages/testes.html';" aria-label="Ir para a página de testes">Testes</button>
+      <button onclick="window.location.href = 'pages/clima.html';">Clima</button>
+      <button onclick="window.location.href = 'pages/configuracoes.html';">Configurações</button>
+      <button onclick="window.location.href = 'pages/testes.html';">Testes</button>
     </div>
   </header>
 
   <main>
+    <!-- Relógio -->
     <div id="clock-container">
       <div class="clock" id="current-time">--:--:--</div>
       <div class="date" id="current-date">Carregando...</div>
     </div>
 
+    <!-- Contador regressivo -->
     <div id="countdown-container">
       <div class="countdown-container">
         <div class="countdown-item">
@@ -62,11 +72,13 @@
       </div>
     </div>
 
+    <!-- Mensagem de tempo esgotado -->
     <div id="timeout-message">
       Tempo Esgotado!
       <button onclick="resetCountdown()">Reiniciar</button>
     </div>
 
+    <!-- Clima -->
     <div id="weather-container">
       <h2>Clima</h2>
       <p id="weather-location">Localização: --</p>
@@ -78,20 +90,24 @@
     </div>
   </main>
 
+  <!-- Rodapé -->
   <footer>
     <p>&copy; 2025 CountClock. Todos os direitos reservados.</p>
   </footer>
 
+  <!-- Scripts -->
   <script src="scripts/clock.js" defer></script>
   <script src="scripts/countdown.js" defer></script>
   <script src="scripts/permissions.js" defer></script>
   <script src="scripts/main.js" defer></script>
 
+  <!-- Som de alarme -->
   <audio id="alarm-sound">
     <source src="assets/sounds/contagem.mp3" type="audio/mpeg">
     Seu navegador não suporta o elemento de áudio.
   </audio>
 
+  <!-- Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js')
