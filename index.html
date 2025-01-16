@@ -48,42 +48,61 @@
       padding: 20px;
     }
 
-    /* Botão de Alternar Tema */
-    .theme-toggle {
+    /* Menu Suspenso */
+    .menu-container {
       position: absolute;
       top: 20px;
       right: 20px;
-      background-color: #8b0000;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
+      z-index: 1000; /* Garante que o menu fique acima de outros elementos */
+    }
+
+    .menu-icon {
+      font-size: 1.5rem;
       cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.3s;
+      color: #e0e0e0;
     }
 
-    .theme-toggle:hover {
-      background-color: #6b0000;
+    body.light-theme .menu-icon {
+      color: #333;
     }
 
-    /* Botão de Permissões */
-    .permissions-button {
+    .menu-dropdown {
+      display: none;
       position: absolute;
-      top: 70px; /* Abaixo do botão "Alternar Tema" */
-      right: 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: 10px 20px;
+      right: 0;
+      background-color: #333;
       border-radius: 5px;
-      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+
+    body.light-theme .menu-dropdown {
+      background-color: #fff;
+    }
+
+    .menu-dropdown button {
+      display: block;
+      width: 100%;
+      padding: 10px 20px;
+      border: none;
+      background-color: transparent;
+      color: #e0e0e0;
       font-size: 1rem;
+      text-align: left;
+      cursor: pointer;
       transition: background-color 0.3s;
     }
 
-    .permissions-button:hover {
-      background-color: #0056b3;
+    body.light-theme .menu-dropdown button {
+      color: #333;
+    }
+
+    .menu-dropdown button:hover {
+      background-color: #444;
+    }
+
+    body.light-theme .menu-dropdown button:hover {
+      background-color: #f0f0f0;
     }
 
     /* Relógio */
@@ -231,6 +250,12 @@
       .countdown-item label {
         font-size: 0.9rem;
       }
+
+      /* Esconde os botões originais no mobile */
+      .theme-toggle,
+      .permissions-button {
+        display: none;
+      }
     }
 
     /* Animação de piscar */
@@ -245,14 +270,15 @@
   </style>
 </head>
 <body>
-  <!-- Botão de Alternar Tema -->
-  <button class="theme-toggle" onclick="toggleTheme()">Alternar Tema</button>
-
-  <!-- Botão de Permissões -->
-  <button class="permissions-button" onclick="window.location.href='pages/configuracoes.html'">Permissões</button>
-
-  <!-- Botão de Clima -->
-  <button class="permissions-button" style="top: 120px;" onclick="window.location.href='pages/clima.html'">Clima</button>
+  <!-- Menu Suspenso -->
+  <div class="menu-container">
+    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    <div class="menu-dropdown" id="menu-dropdown">
+      <button onclick="toggleTheme()">Alternar Tema</button>
+      <button onclick="window.location.href='pages/configuracoes.html'">Permissões</button>
+      <button onclick="window.location.href='pages/clima.html'">Clima</button>
+    </div>
+  </div>
 
   <div class="container">
     <!-- Relógio -->
@@ -304,6 +330,22 @@
     let clockInterval;
     let countdownInterval;
     const countdownKey = 'countdownTarget'; // Chave para armazenar a data/hora alvo
+
+    // Função para alternar o menu suspenso
+    function toggleMenu() {
+      const menuDropdown = document.getElementById('menu-dropdown');
+      menuDropdown.style.display = menuDropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Fechar o menu ao clicar fora dele
+    window.onclick = function (event) {
+      if (!event.target.matches('.menu-icon')) {
+        const menuDropdown = document.getElementById('menu-dropdown');
+        if (menuDropdown.style.display === 'block') {
+          menuDropdown.style.display = 'none';
+        }
+      }
+    };
 
     // Função para alternar entre temas dark e claro
     function toggleTheme() {
