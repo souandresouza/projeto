@@ -6,7 +6,7 @@
   <title>Offline</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Roboto', sans-serif;
       background-color: #1a1a1a;
       color: #f9f9f9;
       display: flex;
@@ -15,23 +15,33 @@
       height: 100vh;
       margin: 0;
       text-align: center;
+      transition: background-color 0.3s, color 0.3s;
     }
+
+    body.light-theme {
+      background-color: #f9f9f9;
+      color: #1a1a1a;
+    }
+
     h1 {
       font-size: 2rem;
       margin-bottom: 10px;
     }
+
     p {
       font-size: 1.2rem;
       color: #bbb;
       margin-bottom: 20px;
     }
+
     .offline-icon {
       font-size: 4rem;
       margin-bottom: 20px;
       animation: pulse 2s infinite;
     }
+
     button {
-      background-color: #007bff;
+      background-color: #8b0000;
       color: white;
       border: none;
       padding: 10px 20px;
@@ -39,10 +49,29 @@
       cursor: pointer;
       font-size: 1rem;
       transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
+
     button:hover {
-      background-color: #0056b3;
+      background-color: #6b0000;
     }
+
+    button .icon {
+      font-size: 1.2rem;
+    }
+
+    a {
+      color: #8b0000;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    a:hover {
+      color: #6b0000;
+    }
+
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.1); }
@@ -55,14 +84,17 @@
     <!-- Ícone ou animação -->
     <div class="offline-icon">📴</div>
     <h1>Você está offline</h1>
-    <p>Por favor, verifique sua conexão com a internet.</p>
+    <p>Parece que você está sem conexão com a internet. Verifique sua rede e tente novamente.</p>
 
     <!-- Botão para tentar reconectar -->
-    <button onclick="checkConnection()">Tentar Reconectar</button>
+    <button onclick="checkConnection()">
+      <span class="icon">🔄</span>
+      <span>Recarregar Página</span>
+    </button>
 
     <!-- Link para voltar à página inicial -->
     <p style="margin-top: 20px;">
-      <a href="/index.html" style="color: #007bff; text-decoration: none;">Voltar à Página Inicial</a>
+      <a href="/index.html">Voltar à Página Inicial</a>
     </p>
   </div>
 
@@ -82,6 +114,12 @@
         window.location.reload(); // Recarrega a página quando a conexão é restaurada
       }
     }, 5000);
+
+    // Aplica o tema salvo
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      document.body.classList.add('light-theme');
+    }
   </script>
 </body>
 </html>
