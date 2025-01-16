@@ -53,6 +53,7 @@
       position: absolute;
       top: 20px;
       right: 20px;
+      z-index: 1000; /* Garante que o menu fique acima de outros elementos */
     }
 
     .menu-icon {
@@ -72,7 +73,7 @@
       background-color: #333;
       border-radius: 5px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      z-index: 10;
+      z-index: 1000;
     }
 
     body.light-theme .menu-dropdown {
@@ -256,7 +257,8 @@
     /* Responsividade */
     @media (max-width: 600px) {
       .weather-info h1 {
-        font-size: 2rem;
+        font-size: 1.8rem; /* Reduz o tamanho da fonte no modo retrato mobile */
+        margin-top: 40px; /* Adiciona margem superior para evitar sobreposição */
       }
 
       .weather-info p {
@@ -266,6 +268,12 @@
       .input-container input,
       .input-container select {
         max-width: 100%;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .weather-info h1 {
+        font-size: 1.5rem; /* Reduz ainda mais o tamanho da fonte para telas muito pequenas */
       }
     }
   </style>
