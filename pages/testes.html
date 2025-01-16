@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Página de testes para notificações, vibração e som.">
+  <title>Testes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #1a1a1a;
+      color: #f9f9f9;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      text-align: center;
+      max-width: 800px;
+      width: 100%;
+      padding: 20px;
+    }
+    .test-button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .test-button:hover {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
+    .back-button {
+      margin-top: 20px;
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .back-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Testes</h1>
+    <button class="test-button" style="background-color: #28a745;" onclick="testNotifications()" aria-label="Testar Notificações">
+      Testar Notificações
+    </button>
+    <button class="test-button" style="background-color: #ffc107;" onclick="testVibration()" aria-label="Testar Vibração">
+      Testar Vibração
+    </button>
+    <button class="test-button" style="background-color: #6f42c1;" onclick="testSound()" aria-label="Testar Som">
+      Testar Som
+    </button>
+    <button class="back-button" onclick="window.location.href = '../index.html';" aria-label="Voltar ao CountClock">
+      Voltar ao CountClock
+    </button>
+  </div>
+
+  <script>
+    // Função para testar notificações
+    function testNotifications() {
+      if (!('Notification' in window)) {
+        alert('Seu navegador não suporta notificações.');
+        return;
+      }
+
+      if (Notification.permission === 'granted') {
+        showNotification();
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then((permission) => {
+          if (permission === 'granted') {
+            showNotification();
+          }
+        });
+      }
+    }
+
+    function showNotification() {
+      new Notification('Teste de Notificação', {
+        body: 'Esta é uma notificação de teste.',
+        icon: '/assets/icons/icon-192x192.png',
+      });
+    }
+
+    // Função para testar vibração
+    function testVibration() {
+      if (!('vibrate' in navigator)) {
+        alert('Seu dispositivo não suporta vibração.');
+        return;
+      }
+      navigator.vibrate([500, 500, 500]); // Vibra 3 vezes
+    }
+
+    // Função para testar som
+    function testSound() {
+      const audio = new Audio('/assets/sounds/contagem.mp3');
+      audio.play().catch((error) => {
+        alert('Erro ao reproduzir o som. Verifique as permissões.');
+      });
+    }
+  </script>
+</body>
+</html>
