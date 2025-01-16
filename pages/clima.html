@@ -32,13 +32,6 @@
       align-items: center;
       min-height: 100vh;
       text-align: center;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    /* Tema Claro */
-    body.light-theme {
-      background-color: #f9f9f9;
-      color: #333; /* Texto escuro no tema claro */
     }
 
     /* Container Principal */
@@ -62,10 +55,6 @@
       color: #e0e0e0;
     }
 
-    body.light-theme .menu-icon {
-      color: #333;
-    }
-
     .menu-dropdown {
       display: none;
       position: absolute;
@@ -74,10 +63,6 @@
       border-radius: 5px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       z-index: 1000;
-    }
-
-    body.light-theme .menu-dropdown {
-      background-color: #fff;
     }
 
     .menu-dropdown button {
@@ -93,16 +78,8 @@
       transition: background-color 0.3s;
     }
 
-    body.light-theme .menu-dropdown button {
-      color: #333;
-    }
-
     .menu-dropdown button:hover {
       background-color: #444;
-    }
-
-    body.light-theme .menu-dropdown button:hover {
-      background-color: #f0f0f0;
     }
 
     /* Estilos do Clima */
@@ -114,10 +91,6 @@
       font-size: 2.5rem;
       margin-bottom: 20px;
       color: #e0e0e0;
-    }
-
-    body.light-theme .weather-info h1 {
-      color: #333;
     }
 
     .weather-icon {
@@ -132,10 +105,6 @@
       color: #e0e0e0;
     }
 
-    body.light-theme .weather-info p {
-      color: #333;
-    }
-
     .input-container {
       margin: 20px 0;
     }
@@ -145,10 +114,6 @@
       margin-bottom: 5px;
       font-size: 1rem;
       color: #e0e0e0;
-    }
-
-    body.light-theme .input-container label {
-      color: #333;
     }
 
     .input-container input,
@@ -161,14 +126,6 @@
       max-width: 300px;
       background-color: #333;
       color: #e0e0e0;
-      transition: background-color 0.3s, border-color 0.3s, color 0.3s;
-    }
-
-    body.light-theme .input-container input,
-    body.light-theme .input-container select {
-      background-color: #fff;
-      border-color: #ccc;
-      color: #333;
     }
 
     .input-container button {
@@ -199,11 +156,6 @@
       color: #e0e0e0;
     }
 
-    body.light-theme .recent-searches h2,
-    body.light-theme .favorites-list h2 {
-      color: #333;
-    }
-
     .recent-searches ul,
     .favorites-list ul {
       list-style-type: none;
@@ -216,11 +168,6 @@
       margin: 5px 0;
       cursor: pointer;
       color: #e0e0e0;
-    }
-
-    body.light-theme .recent-searches ul li,
-    body.light-theme .favorites-list ul li {
-      color: #333;
     }
 
     .recent-searches ul li:hover,
@@ -248,10 +195,6 @@
       font-size: 1.2rem;
       color: #e0e0e0;
       display: none;
-    }
-
-    body.light-theme .loading {
-      color: #333;
     }
 
     /* Responsividade */
@@ -284,7 +227,6 @@
     <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
     <div class="menu-dropdown" id="menu-dropdown">
       <button onclick="window.location.href = '../index.html';">Voltar ao CountClock</button>
-      <button onclick="toggleTheme()">Alternar Tema</button>
     </div>
   </div>
 
@@ -366,11 +308,6 @@
     const apiKey = 'e7314838ebd86431d951d53c59e7fd20'; // Chave da API OpenWeatherMap
     const recentSearchesKey = 'recentSearches'; // Chave para armazenar pesquisas recentes
     const favoritesKey = 'favorites'; // Chave para armazenar favoritos
-
-    // Função para alternar entre temas dark e claro
-    function toggleTheme() {
-      document.body.classList.toggle('light-theme');
-    }
 
     // Função para converter graus em direção do vento
     function getWindDirection(degrees) {
