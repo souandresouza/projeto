@@ -150,6 +150,7 @@
   <div class="menu-container">
     <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
     <div class="menu-dropdown" id="menu-dropdown">
+      <button onclick="window.location.href='/index.html'">CountClock</button>
       <button onclick="window.location.href='pages/clima.html'">Clima</button>
       <button onclick="window.location.href='pages/configuracoes.html'">Permissões</button>
     </div>
@@ -279,11 +280,6 @@
         if (event.target.checked) {
           requestNotificationPermission();
         }
-      });
-
-      // Botão de voltar
-      document.getElementById('backButton').addEventListener('click', () => {
-        window.location.href = '../index.html';
       });
     });
   </script>
