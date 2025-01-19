@@ -236,12 +236,7 @@
       updateFavoriteButton(data.name, data.sys.country);
 
       // Envia notificação se a permissão for concedida
-      if (Notification.permission === 'granted') {
-        new Notification(`Clima em ${data.name}`, {
-          body: `Temperatura: ${data.main.temp}°C, Condição: ${data.weather[0].description}`,
-          icon: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
-        });
-      }
+      sendWeatherNotification(data);
     }
 
     // Função para adicionar uma pesquisa recente
@@ -314,10 +309,34 @@
         .join('');
     }
 
+    // Função para exibir notificação usando o Service Worker
+    function sendWeatherNotification(weatherData) {
+      if (Notification.permission === 'granted') {
+        navigator.serviceWorker.ready.then((registration) => {
+          registration.showNotification(`Clima em ${weatherData.name}`, {
+            body: `Temperatura: ${weatherData.main.temp}°C, Condição: ${weatherData.weather[0].description}`,
+            icon: `https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`,
+          });
+        });
+      }
+    }
+
+    // Solicitar permissão para notificações
+    function requestNotificationPermission() {
+      if (Notification.permission !== 'granted') {
+        Notification.requestPermission().then((permission) => {
+          if (permission === 'granted') {
+            console.log('Permissão de notificações concedida.');
+          }
+        });
+      }
+    }
+
     // Carrega a localização salva ao abrir a página
     window.onload = () => {
       updateRecentSearchesList();
       updateFavoritesList();
+      requestNotificationPermission();
     };
   </script>
 </body>
