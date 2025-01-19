@@ -161,7 +161,7 @@
       <label for="locationAccess">
         <input type="checkbox" id="locationAccess"> Compartilhar Localização
       </label>
-      <small>Permitir acesso à sua localização.</small>
+      <small>Permitir acesso à sua localização com alta precisão (GPS).</small>
     </div>
 
     <div class="settings-item">
@@ -282,24 +282,32 @@
       }
     }
 
-    // Função para solicitar permissão de geolocalização
+    // Função para solicitar permissão de geolocalização com alta precisão
     function requestLocationPermission() {
       if (navigator.geolocation) {
+        const options = {
+          enableHighAccuracy: true, // Ativa alta precisão (GPS, se disponível)
+          timeout: 5000, // Tempo máximo de espera para obter a localização
+          maximumAge: 0 // Não usa cache de localização anterior
+        };
+
         navigator.geolocation.getCurrentPosition(
-          () => {
+          (position) => {
             console.log('Permissão de localização concedida.');
+            console.log('Localização precisa:', position.coords.latitude, position.coords.longitude);
             // Atualiza o localStorage
             const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
             permissions.locationAccess = true;
             localStorage.setItem('permissions', JSON.stringify(permissions));
           },
-          () => {
-            console.log('Permissão de localização negada.');
+          (error) => {
+            console.log('Permissão de localização negada ou erro ao obter localização:', error.message);
             // Desmarca a opção no localStorage
             const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
             permissions.locationAccess = false;
             localStorage.setItem('permissions', JSON.stringify(permissions));
-          }
+          },
+          options // Passa as opções de alta precisão
         );
       } else {
         console.log('Geolocalização não suportada pelo navegador.');
