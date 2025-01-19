@@ -135,23 +135,14 @@
       }
     }
   </style>
-  <script>
-    // Aplica o tema ao carregar a página
-    document.addEventListener('DOMContentLoaded', () => {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'dark') {
-        document.body.classList.add('dark-theme');
-      }
-    });
-  </script>
 </head>
 <body>
   <!-- Menu Suspenso -->
   <div class="menu-container">
     <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
     <div class="menu-dropdown" id="menu-dropdown">
-      <button onclick="window.location.href='../index.html'">CountClock</button>
-      <button onclick="window.location.href='clima.html'">Clima</button>
+      <button onclick="window.location.href='pages/clima.html'">Clima</button>
+      <button onclick="window.location.href='pages/configuracoes.html'">Permissões</button>
     </div>
   </div>
 
@@ -167,31 +158,31 @@
     </div>
 
     <div class="settings-item">
-      <label for="notificationSound">
-        <input type="checkbox" id="notificationSound"> Som de Notificação
-      </label>
-      <small>Ative para emitir som em notificações.</small>
-    </div>
-
-    <div class="settings-item">
-      <label for="vibration">
-        <input type="checkbox" id="vibration"> Permitir Vibrar
-      </label>
-      <small>Ative para receber feedback tátil.</small>
-    </div>
-
-    <div class="settings-item">
-      <label for="lockScreen">
-        <input type="checkbox" id="lockScreen"> Alerta na Tela de Bloqueio
-      </label>
-      <small>Exibir alertas mesmo com a tela bloqueada.</small>
-    </div>
-
-    <div class="settings-item">
       <label for="locationAccess">
         <input type="checkbox" id="locationAccess"> Compartilhar Localização
       </label>
       <small>Permitir acesso à sua localização.</small>
+    </div>
+
+    <div class="settings-item">
+      <label for="cameraAccess">
+        <input type="checkbox" id="cameraAccess"> Acesso à Câmera
+      </label>
+      <small>Permitir acesso à câmera do dispositivo.</small>
+    </div>
+
+    <div class="settings-item">
+      <label for="microphoneAccess">
+        <input type="checkbox" id="microphoneAccess"> Acesso ao Microfone
+      </label>
+      <small>Permitir acesso ao microfone do dispositivo.</small>
+    </div>
+
+    <div class="settings-item">
+      <label for="storageAccess">
+        <input type="checkbox" id="storageAccess"> Acesso ao Armazenamento
+      </label>
+      <small>Permitir acesso ao armazenamento local do dispositivo.</small>
     </div>
 
     <div class="settings-item">
@@ -223,39 +214,61 @@
       }
     };
 
+    // Função para verificar o status das permissões
+    async function checkPermissions() {
+      const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
+
+      // Verifica permissão de notificações
+      if (Notification.permission === 'granted') {
+        permissions.notifications = true;
+      } else {
+        permissions.notifications = false;
+      }
+
+      // Verifica permissão de geolocalização
+      const geoPermission = await navigator.permissions.query({ name: 'geolocation' });
+      permissions.locationAccess = geoPermission.state === 'granted';
+
+      // Verifica permissão de câmera
+      const cameraPermission = await navigator.permissions.query({ name: 'camera' });
+      permissions.cameraAccess = cameraPermission.state === 'granted';
+
+      // Verifica permissão de microfone
+      const microphonePermission = await navigator.permissions.query({ name: 'microphone' });
+      permissions.microphoneAccess = microphonePermission.state === 'granted';
+
+      // Verifica permissão de armazenamento
+      const storagePermission = await navigator.permissions.query({ name: 'persistent-storage' });
+      permissions.storageAccess = storagePermission.state === 'granted';
+
+      // Salva as permissões atualizadas no localStorage
+      localStorage.setItem('permissions', JSON.stringify(permissions));
+    }
+
     // Função para carregar permissões salvas
     function loadPermissions() {
       const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
       document.getElementById('notifications').checked = permissions.notifications || false;
-      document.getElementById('notificationSound').checked = permissions.notificationSound || false;
-      document.getElementById('vibration').checked = permissions.vibration || false;
-      document.getElementById('lockScreen').checked = permissions.lockScreen || false;
       document.getElementById('locationAccess').checked = permissions.locationAccess || false;
+      document.getElementById('cameraAccess').checked = permissions.cameraAccess || false;
+      document.getElementById('microphoneAccess').checked = permissions.microphoneAccess || false;
+      document.getElementById('storageAccess').checked = permissions.storageAccess || false;
       document.getElementById('language').value = permissions.language || 'pt-BR';
-    }
-
-    // Função para salvar permissões
-    function savePermissions() {
-      const permissions = {
-        notifications: document.getElementById('notifications').checked,
-        notificationSound: document.getElementById('notificationSound').checked,
-        vibration: document.getElementById('vibration').checked,
-        lockScreen: document.getElementById('lockScreen').checked,
-        locationAccess: document.getElementById('locationAccess').checked,
-        language: document.getElementById('language').value,
-      };
-      localStorage.setItem('permissions', JSON.stringify(permissions));
     }
 
     // Função para solicitar permissão de notificações
     function requestNotificationPermission() {
       if (Notification.permission !== 'granted') {
-        Notification.requestPermission().then(permission => {
+        Notification.requestPermission().then((permission) => {
           if (permission === 'granted') {
-            console.log('Permissão para notificações concedida.');
+            console.log('Permissão de notificações concedida.');
+            // Atualiza o localStorage
+            const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
+            permissions.notifications = true;
+            localStorage.setItem('permissions', JSON.stringify(permissions));
           } else {
-            console.log('Permissão para notificações negada.');
-            // Desmarca a opção de notificações no localStorage
+            console.log('Permissão de notificações negada.');
+            // Desmarca a opção no localStorage
             const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
             permissions.notifications = false;
             localStorage.setItem('permissions', JSON.stringify(permissions));
@@ -264,21 +277,123 @@
       }
     }
 
-    // Adiciona event listeners aos elementos
-    document.addEventListener('DOMContentLoaded', () => {
-      // Carrega as permissões ao abrir a página
-      loadPermissions();
+    // Função para solicitar permissão de geolocalização
+    function requestLocationPermission() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          () => {
+            console.log('Permissão de localização concedida.');
+            // Atualiza o localStorage
+            const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
+            permissions.locationAccess = true;
+            localStorage.setItem('permissions', JSON.stringify(permissions));
+          },
+          () => {
+            console.log('Permissão de localização negada.');
+            // Desmarca a opção no localStorage
+            const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
+            permissions.locationAccess = false;
+            localStorage.setItem('permissions', JSON.stringify(permissions));
+          }
+        );
+      } else {
+        console.log('Geolocalização não suportada pelo navegador.');
+      }
+    }
 
-      // Salva as permissões ao alterar qualquer configuração
-      document.querySelectorAll('.settings-item input, .settings-item select').forEach((element) => {
-        element.addEventListener('change', savePermissions);
-      });
+    // Função para solicitar permissão de câmera
+    async function requestCameraPermission() {
+      try {
+        await navigator.mediaDevices.getUserMedia({ video: true });
+        console.log('Permissão de câmera concedida.');
+        // Atualiza o localStorage
+        const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
+        permissions.cameraAccess = true;
+        localStorage.setItem('permissions', JSON.stringify(permissions));
+      } catch (error) {
+        console.log('Permissão de câmera negada.');
+        // Desmarca a opção no localStorage
+        const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
+        permissions.cameraAccess = false;
+        localStorage.setItem('permissions', JSON.stringify(permissions));
+      }
+    }
+
+    // Função para solicitar permissão de microfone
+    async function requestMicrophonePermission() {
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        console.log('Permissão de microfone concedida.');
+        // Atualiza o localStorage
+        const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
+        permissions.microphoneAccess = true;
+        localStorage.setItem('permissions', JSON.stringify(permissions));
+      } catch (error) {
+        console.log('Permissão de microfone negada.');
+        // Desmarca a opção no localStorage
+        const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
+        permissions.microphoneAccess = false;
+        localStorage.setItem('permissions', JSON.stringify(permissions));
+      }
+    }
+
+    // Adiciona event listeners aos elementos
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Verifica e atualiza as permissões ao carregar a página
+      await checkPermissions();
+      loadPermissions();
 
       // Solicita permissão de notificações ao marcar a opção
       document.getElementById('notifications').addEventListener('change', (event) => {
         if (event.target.checked) {
           requestNotificationPermission();
+        } else {
+          // Desmarca a permissão no localStorage
+          const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
+          permissions.notifications = false;
+          localStorage.setItem('permissions', JSON.stringify(permissions));
         }
+      });
+
+      // Solicita permissão de localização ao marcar a opção
+      document.getElementById('locationAccess').addEventListener('change', (event) => {
+        if (event.target.checked) {
+          requestLocationPermission();
+        } else {
+          // Desmarca a permissão no localStorage
+          const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
+          permissions.locationAccess = false;
+          localStorage.setItem('permissions', JSON.stringify(permissions));
+        }
+      });
+
+      // Solicita permissão de câmera ao marcar a opção
+      document.getElementById('cameraAccess').addEventListener('change', (event) => {
+        if (event.target.checked) {
+          requestCameraPermission();
+        } else {
+          // Desmarca a permissão no localStorage
+          const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
+          permissions.cameraAccess = false;
+          localStorage.setItem('permissions', JSON.stringify(permissions));
+        }
+      });
+
+      // Solicita permissão de microfone ao marcar a opção
+      document.getElementById('microphoneAccess').addEventListener('change', (event) => {
+        if (event.target.checked) {
+          requestMicrophonePermission();
+        } else {
+          // Desmarca a permissão no localStorage
+          const permissions = JSON.parse(localStorage.getItem('permissions')) || {};
+          permissions.microphoneAccess = false;
+          localStorage.setItem('permissions', JSON.stringify(permissions));
+        }
+      });
+
+      // Botão de voltar
+      document.getElementById('backButton').addEventListener('click', () => {
+        window.location.href = '../index.html';
       });
     });
   </script>
