@@ -13,212 +13,34 @@
   <link rel="apple-touch-icon" href="../assets/icons/icon-192x192.png">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    /* Reset CSS */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    /* Estilos Globais */
-    body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #1a1a1a; /* Fundo escuro padrão */
-      color: #e0e0e0; /* Texto claro */
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      text-align: center;
-    }
-
-    /* Container Principal */
-    .container {
-      max-width: 800px;
-      width: 100%;
-      padding: 20px;
-    }
-
-    /* Menu Suspenso */
-    .menu-container {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      z-index: 1000; /* Garante que o menu fique acima de outros elementos */
-    }
-
-    .menu-icon {
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #e0e0e0;
-    }
-
-    .menu-dropdown {
-      display: none;
-      position: absolute;
-      right: 0;
-      background-color: #333;
-      border-radius: 5px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-    }
-
-    .menu-dropdown button {
-      display: block;
-      width: 100%;
-      padding: 10px 20px;
-      border: none;
-      background-color: transparent;
-      color: #e0e0e0;
-      font-size: 1rem;
-      text-align: left;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    .menu-dropdown button:hover {
-      background-color: #444;
-    }
-
-    /* Estilos do Clima */
-    .weather-info {
-      margin-bottom: 40px;
-    }
-
-    .weather-info h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      color: #e0e0e0;
-    }
-
-    .weather-icon {
-      width: 100px;
-      height: 100px;
-      margin-bottom: 20px;
-    }
-
-    .weather-info p {
-      font-size: 1.2rem;
-      margin: 10px 0;
-      color: #e0e0e0;
-    }
-
-    .input-container {
-      margin: 20px 0;
-    }
-
-    .input-container label {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 1rem;
-      color: #e0e0e0;
-    }
-
-    .input-container input,
-    .input-container select {
-      padding: 10px;
-      font-size: 1rem;
-      border: 1px solid #444;
-      border-radius: 5px;
-      width: 100%;
-      max-width: 300px;
-      background-color: #333;
-      color: #e0e0e0;
-    }
-
-    .input-container button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      background-color: #8b0000;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      margin-top: 10px;
-    }
-
-    .input-container button:hover {
-      background-color: #6b0000;
-    }
-
-    .recent-searches,
-    .favorites-list {
-      margin-top: 20px;
-    }
-
-    .recent-searches h2,
-    .favorites-list h2 {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-      color: #e0e0e0;
-    }
-
-    .recent-searches ul,
-    .favorites-list ul {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    .recent-searches ul li,
-    .favorites-list ul li {
-      font-size: 1rem;
-      margin: 5px 0;
-      cursor: pointer;
-      color: #e0e0e0;
-    }
-
-    .recent-searches ul li:hover,
-    .favorites-list ul li:hover {
-      text-decoration: underline;
-    }
-
-    .clear-recent {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      background-color: #8b0000;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      margin-top: 10px;
-    }
-
-    .clear-recent:hover {
-      background-color: #6b0000;
-    }
-
-    .loading {
-      font-size: 1.2rem;
-      color: #e0e0e0;
-      display: none;
-    }
-
-    /* Responsividade */
-    @media (max-width: 600px) {
-      .weather-info h1 {
-        font-size: 1.8rem; /* Reduz o tamanho da fonte no modo retrato mobile */
-        margin-top: 40px; /* Adiciona margem superior para evitar sobreposição */
-      }
-
-      .weather-info p {
-        font-size: 1rem;
-      }
-
-      .input-container input,
-      .input-container select {
-        max-width: 100%;
-      }
-    }
-
-    @media (max-width: 400px) {
-      .weather-info h1 {
-        font-size: 1.5rem; /* Reduz ainda mais o tamanho da fonte para telas muito pequenas */
-      }
-    }
+    /* Reset CSS e estilos globais (mantidos iguais) */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Roboto', sans-serif; background-color: #1a1a1a; color: #e0e0e0; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; text-align: center; }
+    .container { max-width: 800px; width: 100%; padding: 20px; }
+    .menu-container { position: absolute; top: 20px; right: 20px; z-index: 1000; }
+    .menu-icon { font-size: 1.5rem; cursor: pointer; color: #e0e0e0; }
+    .menu-dropdown { display: none; position: absolute; right: 0; background-color: #333; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; }
+    .menu-dropdown button { display: block; width: 100%; padding: 10px 20px; border: none; background-color: transparent; color: #e0e0e0; font-size: 1rem; text-align: left; cursor: pointer; transition: background-color 0.3s; }
+    .menu-dropdown button:hover { background-color: #444; }
+    .weather-info { margin-bottom: 40px; }
+    .weather-info h1 { font-size: 2.5rem; margin-bottom: 20px; color: #e0e0e0; }
+    .weather-icon { width: 100px; height: 100px; margin-bottom: 20px; }
+    .weather-info p { font-size: 1.2rem; margin: 10px 0; color: #e0e0e0; }
+    .input-container { margin: 20px 0; }
+    .input-container label { display: block; margin-bottom: 5px; font-size: 1rem; color: #e0e0e0; }
+    .input-container input, .input-container select { padding: 10px; font-size: 1rem; border: 1px solid #444; border-radius: 5px; width: 100%; max-width: 300px; background-color: #333; color: #e0e0e0; }
+    .input-container button { padding: 10px 20px; border: none; border-radius: 5px; background-color: #8b0000; color: white; font-size: 1rem; cursor: pointer; transition: background-color 0.3s; margin-top: 10px; }
+    .input-container button:hover { background-color: #6b0000; }
+    .recent-searches, .favorites-list { margin-top: 20px; }
+    .recent-searches h2, .favorites-list h2 { font-size: 1.5rem; margin-bottom: 10px; color: #e0e0e0; }
+    .recent-searches ul, .favorites-list ul { list-style-type: none; padding: 0; }
+    .recent-searches ul li, .favorites-list ul li { font-size: 1rem; margin: 5px 0; cursor: pointer; color: #e0e0e0; }
+    .recent-searches ul li:hover, .favorites-list ul li:hover { text-decoration: underline; }
+    .clear-recent { padding: 10px 20px; border: none; border-radius: 5px; background-color: #8b0000; color: white; font-size: 1rem; cursor: pointer; transition: background-color 0.3s; margin-top: 10px; }
+    .clear-recent:hover { background-color: #6b0000; }
+    .loading { font-size: 1.2rem; color: #e0e0e0; display: none; }
+    @media (max-width: 600px) { .weather-info h1 { font-size: 1.8rem; margin-top: 40px; } .weather-info p { font-size: 1rem; } .input-container input, .input-container select { max-width: 100%; } }
+    @media (max-width: 400px) { .weather-info h1 { font-size: 1.5rem; } }
   </style>
 </head>
 <body>
@@ -289,6 +111,10 @@
   </div>
 
   <script>
+    const apiKey = 'e7314838ebd86431d951d53c59e7fd20'; // Chave da API OpenWeatherMap
+    const recentSearchesKey = 'recentSearches'; // Chave para armazenar pesquisas recentes
+    const favoritesKey = 'favorites'; // Chave para armazenar favoritos
+
     // Função para alternar o menu suspenso
     function toggleMenu() {
       const menuDropdown = document.getElementById('menu-dropdown');
@@ -305,35 +131,13 @@
       }
     };
 
-    // Código JavaScript do clima.html (mantido igual)
-    const apiKey = 'e7314838ebd86431d951d53c59e7fd20'; // Chave da API OpenWeatherMap
-    const recentSearchesKey = 'recentSearches'; // Chave para armazenar pesquisas recentes
-    const favoritesKey = 'favorites'; // Chave para armazenar favoritos
-
-    // Função para converter graus em direção do vento
-    function getWindDirection(degrees) {
-      const directions = ['Norte', 'Nordeste', 'Leste', 'Sudeste', 'Sul', 'Sudoeste', 'Oeste', 'Noroeste'];
-      const index = Math.round((degrees % 360) / 45);
-      return directions[index % 8];
-    }
-
-    // Função para validar a entrada do usuário
-    function validateInput(input) {
-      if (!input) {
-        alert('Por favor, insira um CEP ou o nome da cidade.');
-        return false;
-      }
-      if (/^\d{8}$/.test(input) && !/^\d+$/.test(input)) {
-        alert('CEP inválido. O CEP deve conter exatamente 8 dígitos.');
-        return false;
-      }
-      return true;
-    }
-
     // Função para buscar dados do tempo
     async function fetchWeather() {
       const input = document.getElementById('location-input').value.trim();
-      if (!validateInput(input)) return;
+      if (!input) {
+        alert('Por favor, insira um CEP ou o nome da cidade.');
+        return;
+      }
 
       document.getElementById('loading').style.display = 'block';
 
@@ -354,10 +158,8 @@
 
     // Função para buscar dados do tempo por CEP
     async function fetchWeatherByCEP(cep) {
-      console.log(`Buscando clima para o CEP: ${cep}`);
       const viaCepResponse = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
       const viaCepData = await viaCepResponse.json();
-      console.log('Dados do ViaCEP:', viaCepData);
 
       if (viaCepData.erro) {
         throw new Error('CEP não encontrado. Verifique o CEP e tente novamente.');
@@ -365,13 +167,11 @@
 
       const city = viaCepData.localidade;
       const state = viaCepData.uf;
-      console.log(`Cidade encontrada: ${city}, ${state}`);
 
       const weatherResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city},BR-${state}&appid=${apiKey}&units=metric&lang=pt`
       );
       const weatherData = await weatherResponse.json();
-      console.log('Dados do clima:', weatherData);
 
       updateWeatherInfo(weatherData);
       addRecentSearch(`${city}, ${state}`);
@@ -379,7 +179,6 @@
 
     // Função para buscar dados do tempo por nome da cidade
     async function fetchWeatherByCity(city, country) {
-      console.log(`Buscando clima para a cidade: ${city}, ${country}`);
       const weatherResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${apiKey}&units=metric&lang=pt`
       );
@@ -389,8 +188,6 @@
       }
 
       const weatherData = await weatherResponse.json();
-      console.log('Dados do clima:', weatherData);
-
       updateWeatherInfo(weatherData);
       addRecentSearch(`${city}, ${country}`);
     }
@@ -410,14 +207,10 @@
         });
 
         const { latitude, longitude } = position.coords;
-        console.log(`Coordenadas: ${latitude}, ${longitude}`);
-
         const weatherResponse = await fetch(
           `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric&lang=pt`
         );
         const weatherData = await weatherResponse.json();
-        console.log('Dados do clima:', weatherData);
-
         updateWeatherInfo(weatherData);
         addRecentSearch(`Localização Atual`);
       } catch (error) {
@@ -430,34 +223,25 @@
 
     // Função para atualizar as informações do clima
     function updateWeatherInfo(data) {
-      console.log('Dados da API:', data);
       document.getElementById('weather-location').textContent = `Localização: ${data.name}, ${data.sys.country}`;
       document.getElementById('weather-temp').textContent = `Temperatura: ${data.main.temp}°C`;
       document.getElementById('weather-condition').textContent = `Condição: ${data.weather[0].description}`;
       document.getElementById('weather-humidity').textContent = `Umidade: ${data.main.humidity}%`;
-
-      const windSpeedKmh = (data.wind.speed * 3.6).toFixed(2);
-      const windDirection = getWindDirection(data.wind.deg);
-      document.getElementById('weather-wind').textContent = `Vento: ${windSpeedKmh} km/h, ${windDirection}`;
-
-      const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString();
-      const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString();
+      document.getElementById('weather-wind').textContent = `Vento: ${(data.wind.speed * 3.6).toFixed(2)} km/h`;
       document.getElementById('weather-pressure').textContent = `Pressão: ${data.main.pressure} hPa`;
-      document.getElementById('weather-sunrise').textContent = `Nascer do Sol: ${sunrise}`;
-      document.getElementById('weather-sunset').textContent = `Pôr do Sol: ${sunset}`;
-
-      const iconCode = data.weather[0].icon;
-      const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
-      document.getElementById('weather-icon').src = iconUrl;
+      document.getElementById('weather-sunrise').textContent = `Nascer do Sol: ${new Date(data.sys.sunrise * 1000).toLocaleTimeString()}`;
+      document.getElementById('weather-sunset').textContent = `Pôr do Sol: ${new Date(data.sys.sunset * 1000).toLocaleTimeString()}`;
+      document.getElementById('weather-icon').src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
 
       updateFavoriteButton(data.name, data.sys.country);
 
-      document.getElementById('weather-info').classList.add('visible');
-      document.getElementById('weather-icon').classList.add('visible');
-      document.getElementById('location-message').classList.add('visible');
-      document.getElementById('input-container').classList.add('visible');
-      document.getElementById('recent-searches').classList.add('visible');
-      document.getElementById('favorites-list').classList.add('visible');
+      // Envia notificação se a permissão for concedida
+      if (Notification.permission === 'granted') {
+        new Notification(`Clima em ${data.name}`, {
+          body: `Temperatura: ${data.main.temp}°C, Condição: ${data.weather[0].description}`,
+          icon: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
+        });
+      }
     }
 
     // Função para adicionar uma pesquisa recente
@@ -532,30 +316,8 @@
 
     // Carrega a localização salva ao abrir a página
     window.onload = () => {
-      const savedLocation = localStorage.getItem('savedLocation');
-      if (savedLocation) {
-        const { type, value, country, lat, lon } = JSON.parse(savedLocation);
-        document.getElementById('location-input').value = value || '';
-        document.getElementById('location-message').textContent = '';
-
-        if (type === 'cep') {
-          fetchWeatherByCEP(value);
-        } else if (type === 'city') {
-          document.getElementById('country-select').value = country || 'BR';
-          fetchWeatherByCity(value, country);
-        } else if (type === 'geo') {
-          fetchWeatherByGeolocation();
-        }
-      }
-
       updateRecentSearchesList();
       updateFavoritesList();
-
-      setTimeout(() => {
-        document.getElementById('input-container').classList.add('visible');
-        document.getElementById('recent-searches').classList.add('visible');
-        document.getElementById('favorites-list').classList.add('visible');
-      }, 500);
     };
   </script>
 </body>
