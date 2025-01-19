@@ -238,8 +238,13 @@
       permissions.microphoneAccess = microphonePermission.state === 'granted';
 
       // Verifica permissão de armazenamento
-      const storagePermission = await navigator.permissions.query({ name: 'persistent-storage' });
-      permissions.storageAccess = storagePermission.state === 'granted';
+      try {
+        localStorage.setItem('test', 'test');
+        localStorage.removeItem('test');
+        permissions.storageAccess = true;
+      } catch (error) {
+        permissions.storageAccess = false;
+      }
 
       // Salva as permissões atualizadas no localStorage
       localStorage.setItem('permissions', JSON.stringify(permissions));
