@@ -45,16 +45,14 @@ self.addEventListener('activate', (event) => {
 // Intercepta as solicitações de rede
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
+  console.log('Interceptando solicitação:', requestUrl.pathname);
 
   // Estratégia para páginas HTML: Network First, com fallback para o cache
   if (event.request.mode === 'navigate') {
-    console.log('Interceptando navegação:', requestUrl.pathname);
     event.respondWith(
       fetch(event.request)
         .then((networkResponse) => {
-          // Se a resposta da rede for válida, armazene-a no cache e retorne
-          if (networkResponse && networkResponse.status === 200) {
-            console.log('Página armazenada no cache:', requestUrl.pathname);
+          if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
             const responseToCache = networkResponse.clone();
             caches.open(CACHE_NAME)
               .then((cache) => cache.put(event.request, responseToCache));
@@ -62,8 +60,6 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => {
-          // Se a rede falhar, sirva a página offline
-          console.log('Falha na rede, servindo fallback offline:', requestUrl.pathname);
           return caches.match(OFFLINE_PAGE);
         })
     );
@@ -71,21 +67,15 @@ self.addEventListener('fetch', (event) => {
 
   // Estratégia para recursos estáticos: Cache First, com fallback para a rede
   else if (urlsToCache.includes(requestUrl.pathname)) {
-    console.log('Interceptando recurso estático:', requestUrl.pathname);
     event.respondWith(
       caches.match(event.request)
         .then((cachedResponse) => {
-          // Retorna o recurso do cache se estiver disponível
           if (cachedResponse) {
-            console.log('Recurso servido do cache:', requestUrl.pathname);
             return cachedResponse;
           }
-
-          // Se não estiver no cache, busca da rede e armazena no cache
           return fetch(event.request)
             .then((networkResponse) => {
               if (networkResponse && networkResponse.status === 200) {
-                console.log('Recurso armazenado no cache:', requestUrl.pathname);
                 const responseToCache = networkResponse.clone();
                 caches.open(CACHE_NAME)
                   .then((cache) => cache.put(event.request, responseToCache));
@@ -93,7 +83,6 @@ self.addEventListener('fetch', (event) => {
               return networkResponse;
             })
             .catch(() => {
-              // Se a rede falhar, retorna uma resposta padrão
               return new Response('Offline', {
                 status: 503,
                 statusText: 'Service Unavailable',
@@ -106,11 +95,9 @@ self.addEventListener('fetch', (event) => {
 
   // Para outras solicitações, tenta buscar da rede
   else {
-    console.log('Interceptando outra solicitação:', requestUrl.pathname);
     event.respondWith(
       fetch(event.request)
         .catch(() => {
-          // Se a rede falhar, retorna uma resposta padrão
           return new Response('Offline', {
             status: 503,
             statusText: 'Service Unavailable',
@@ -118,5 +105,15 @@ self.addEventListener('fetch', (event) => {
           });
         })
     );
+  }
+});
+
+// Atualiza o cache quando solicitado
+self.addEventListener('message', (event) => {
+  if (event.data === 'updateCache') {
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(urlsToCache))
+      .then(() => console.log('Cache atualizado com sucesso.'))
+      .catch((error) => console.error('Erro ao atualizar o cache:', error));
   }
 });
