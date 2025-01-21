@@ -100,6 +100,7 @@
     // Constantes e variáveis globais
     const apiKey = 'e7314838ebd86431d951d53c59e7fd20'; // Chave da API OpenWeatherMap
     const recentSearchesKey = 'recentSearches'; // Chave para armazenar pesquisas recentes
+    const lastCityKey = 'lastCity'; // Chave para armazenar a última cidade pesquisada
     const cityButtonsContainer = document.getElementById('city-buttons-container');
 
     // Função para alternar o menu suspenso
@@ -175,6 +176,8 @@
       updateWeatherInfo(weatherData);
       // Adiciona a cidade à lista de pesquisas recentes
       addRecentSearch(`${city}, ${state}`);
+      // Salva a última cidade pesquisada
+      saveLastCity(`${city}, ${state}`);
     }
 
     // Função para buscar dados do tempo por nome da cidade
@@ -194,6 +197,8 @@
       updateWeatherInfo(weatherData);
       // Adiciona a cidade à lista de pesquisas recentes
       addRecentSearch(`${city}, ${country}`);
+      // Salva a última cidade pesquisada
+      saveLastCity(`${city}, ${country}`);
     }
 
     // Função para atualizar as informações do clima na interface
@@ -223,6 +228,22 @@
       }
     }
 
+    // Função para salvar a última cidade pesquisada
+    function saveLastCity(location) {
+      localStorage.setItem(lastCityKey, location);
+    }
+
+    // Função para carregar a última cidade pesquisada
+    function loadLastCity() {
+      const lastCity = localStorage.getItem(lastCityKey);
+      if (lastCity) {
+        const [city, country] = lastCity.split(', ');
+        document.getElementById('location-input').value = city;
+        document.getElementById('country-select').value = country;
+        fetchWeather(); // Faz a busca do clima automaticamente
+      }
+    }
+
     // Função para atualizar a lista de botões de cidade
     function updateCityButtons() {
       const recentSearches = JSON.parse(localStorage.getItem(recentSearchesKey)) || [];
@@ -247,9 +268,10 @@
       updateCityButtons(); // Atualiza a lista de botões de cidade
     }
 
-    // Atualiza a lista de botões ao carregar a página
+    // Atualiza a lista de botões e carrega a última cidade ao carregar a página
     window.onload = () => {
       updateCityButtons();
+      loadLastCity();
     };
   </script>
 </body>
