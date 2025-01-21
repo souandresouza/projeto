@@ -98,6 +98,7 @@
   </div>
 
   <script>
+    // Constantes e variáveis globais
     const apiKey = 'e7314838ebd86431d951d53c59e7fd20'; // Chave da API OpenWeatherMap
     const recentSearchesKey = 'recentSearches'; // Chave para armazenar pesquisas recentes
     const cityButtonsContainer = document.getElementById('city-buttons-container');
@@ -123,64 +124,80 @@
       const input = document.getElementById('location-input').value.trim();
       const country = document.getElementById('country-select').value;
 
+      // Validação de entrada
       if (!input) {
         alert('Por favor, insira um CEP ou o nome da cidade.');
         return;
       }
 
+      // Exibe o indicador de carregamento
       document.getElementById('loading').style.display = 'block';
 
       try {
+        // Verifica se o input é um CEP válido (apenas para o Brasil)
         if (country === 'BR' && /^\d{8}$/.test(input)) {
           await fetchWeatherByCEP(input);
         } else {
+          // Caso contrário, busca por nome da cidade
           await fetchWeatherByCity(input, country);
         }
       } catch (error) {
+        // Exibe mensagem de erro
         document.getElementById('location-message').textContent = error.message;
         document.getElementById('location-message').style.color = '#ff4444';
       } finally {
+        // Oculta o indicador de carregamento
         document.getElementById('loading').style.display = 'none';
       }
     }
 
     // Função para buscar dados do tempo por CEP
     async function fetchWeatherByCEP(cep) {
+      // Faz a requisição à API do ViaCEP
       const viaCepResponse = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
       const viaCepData = await viaCepResponse.json();
 
+      // Verifica se o CEP foi encontrado
       if (viaCepData.erro) {
         throw new Error('CEP não encontrado. Verifique o CEP e tente novamente.');
       }
 
+      // Obtém a cidade e o estado a partir do CEP
       const city = viaCepData.localidade;
       const state = viaCepData.uf;
 
+      // Faz a requisição à API do OpenWeatherMap
       const weatherResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city},BR-${state}&appid=${apiKey}&units=metric&lang=pt`
       );
       const weatherData = await weatherResponse.json();
 
+      // Atualiza as informações do clima na interface
       updateWeatherInfo(weatherData);
+      // Adiciona a cidade à lista de pesquisas recentes
       addRecentSearch(`${city}, ${state}`);
     }
 
     // Função para buscar dados do tempo por nome da cidade
     async function fetchWeatherByCity(city, country) {
+      // Faz a requisição à API do OpenWeatherMap
       const weatherResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${apiKey}&units=metric&lang=pt`
       );
 
+      // Verifica se a cidade foi encontrada
       if (!weatherResponse.ok) {
         throw new Error('Cidade não encontrada. Verifique o nome e o país e tente novamente.');
       }
 
+      // Atualiza as informações do clima na interface
       const weatherData = await weatherResponse.json();
       updateWeatherInfo(weatherData);
+      // Adiciona a cidade à lista de pesquisas recentes
       addRecentSearch(`${city}, ${country}`);
     }
 
-    // Função para atualizar as informações do clima
+    // Função para atualizar as informações do clima na interface
     function updateWeatherInfo(data) {
       document.getElementById('weather-location').textContent = `Localização: ${data.name}, ${data.sys.country}`;
       document.getElementById('weather-temp').textContent = `Temperatura: ${data.main.temp}°C`;
@@ -196,13 +213,14 @@
     // Função para adicionar uma cidade à lista de pesquisas recentes
     function addRecentSearch(location) {
       let recentSearches = JSON.parse(localStorage.getItem(recentSearchesKey)) || [];
+      // Evita duplicatas
       if (!recentSearches.includes(location)) {
-        recentSearches.unshift(location);
+        recentSearches.unshift(location); // Adiciona no início da lista
         if (recentSearches.length > 10) {
-          recentSearches.pop();
+          recentSearches.pop(); // Mantém apenas as últimas 10 pesquisas
         }
         localStorage.setItem(recentSearchesKey, JSON.stringify(recentSearches));
-        updateCityButtons();
+        updateCityButtons(); // Atualiza a lista de botões de cidade
       }
     }
 
@@ -221,13 +239,13 @@
     function searchCity(city, country) {
       document.getElementById('location-input').value = city;
       document.getElementById('country-select').value = country;
-      fetchWeather();
+      fetchWeather(); // Faz a busca do clima
     }
 
     // Função para limpar a lista de pesquisas recentes
     function clearRecentSearches() {
       localStorage.removeItem(recentSearchesKey);
-      updateCityButtons();
+      updateCityButtons(); // Atualiza a lista de botões de cidade
     }
 
     // Atualiza a lista de botões ao carregar a página
