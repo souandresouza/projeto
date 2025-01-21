@@ -31,11 +31,10 @@
     .input-container input, .input-container select { padding: 10px; font-size: 1rem; border: 1px solid #444; border-radius: 5px; width: 100%; max-width: 300px; background-color: #333; color: #e0e0e0; }
     .input-container button { padding: 10px 20px; border: none; border-radius: 5px; background-color: #8b0000; color: white; font-size: 1rem; cursor: pointer; transition: background-color 0.3s; margin-top: 10px; }
     .input-container button:hover { background-color: #6b0000; }
-    .recent-searches, .favorites-list { margin-top: 20px; }
-    .recent-searches h2, .favorites-list h2 { font-size: 1.5rem; margin-bottom: 10px; color: #e0e0e0; }
-    .recent-searches ul, .favorites-list ul { list-style-type: none; padding: 0; }
-    .recent-searches ul li, .favorites-list ul li { font-size: 1rem; margin: 5px 0; cursor: pointer; color: #e0e0e0; }
-    .recent-searches ul li:hover, .favorites-list ul li:hover { text-decoration: underline; }
+    .city-buttons-container { margin-top: 20px; }
+    .city-button { display: inline-block; margin: 5px; padding: 10px 20px; background-color: #444; color: #e0e0e0; border-radius: 5px; cursor: pointer; transition: background-color 0.3s, transform 0.2s; text-decoration: none; font-size: 1rem; }
+    .city-button:hover { background-color: #555; transform: translateY(-2px); }
+    .city-button:active { transform: translateY(0); }
     .clear-recent { padding: 10px 20px; border: none; border-radius: 5px; background-color: #8b0000; color: white; font-size: 1rem; cursor: pointer; transition: background-color 0.3s; margin-top: 10px; }
     .clear-recent:hover { background-color: #6b0000; }
     .loading { font-size: 1.2rem; color: #e0e0e0; display: none; }
@@ -69,11 +68,6 @@
       <button class="favorite-button" id="favorite-button" onclick="toggleFavorite()">Adicionar aos Favoritos</button>
     </div>
 
-    <!-- Mensagem de Localização -->
-    <p class="location-message" id="location-message">
-      Insira seu CEP ou o nome da cidade para exibir as informações do clima.
-    </p>
-
     <!-- Inputs e Botões -->
     <div class="input-container" id="input-container">
       <label for="location-input">CEP ou Cidade:</label>
@@ -90,20 +84,13 @@
         <option value="AU">Austrália</option>
       </select>
       <button onclick="fetchWeather()">Buscar Clima</button>
-      <button class="geo-button" onclick="fetchWeatherByGeolocation()">Usar Minha Localização</button>
     </div>
 
-    <!-- Pesquisas Recentes -->
+    <!-- Cidades Pesquisadas -->
     <div class="recent-searches" id="recent-searches">
-      <h2>Pesquisas Recentes</h2>
-      <ul id="recent-searches-list"></ul>
+      <h2>Cidades Pesquisadas</h2>
+      <div id="city-buttons-container"></div>
       <button class="clear-recent" onclick="clearRecentSearches()">Limpar Pesquisas Recentes</button>
-    </div>
-
-    <!-- Favoritos -->
-    <div class="favorites-list" id="favorites-list">
-      <h2>Favoritos</h2>
-      <ul id="favorites-list-items"></ul>
     </div>
 
     <!-- Mensagem de Carregamento -->
@@ -113,7 +100,7 @@
   <script>
     const apiKey = 'e7314838ebd86431d951d53c59e7fd20'; // Chave da API OpenWeatherMap
     const recentSearchesKey = 'recentSearches'; // Chave para armazenar pesquisas recentes
-    const favoritesKey = 'favorites'; // Chave para armazenar favoritos
+    const cityButtonsContainer = document.getElementById('city-buttons-container');
 
     // Função para alternar o menu suspenso
     function toggleMenu() {
@@ -134,6 +121,8 @@
     // Função para buscar dados do tempo
     async function fetchWeather() {
       const input = document.getElementById('location-input').value.trim();
+      const country = document.getElementById('country-select').value;
+
       if (!input) {
         alert('Por favor, insira um CEP ou o nome da cidade.');
         return;
@@ -142,10 +131,9 @@
       document.getElementById('loading').style.display = 'block';
 
       try {
-        if (/^\d{8}$/.test(input)) {
+        if (country === 'BR' && /^\d{8}$/.test(input)) {
           await fetchWeatherByCEP(input);
         } else {
-          const country = document.getElementById('country-select').value;
           await fetchWeatherByCity(input, country);
         }
       } catch (error) {
@@ -192,58 +180,6 @@
       addRecentSearch(`${city}, ${country}`);
     }
 
-    // Função para buscar dados do tempo por geolocalização (com GPS)
-    async function fetchWeatherByGeolocation() {
-      if (!navigator.geolocation) {
-        alert('Geolocalização não é suportada pelo seu navegador.');
-        return;
-      }
-
-      document.getElementById('loading').style.display = 'block';
-
-      try {
-        const position = await new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true, // Ativa o GPS para maior precisão
-            timeout: 5000, // Tempo máximo de espera
-            maximumAge: 0 // Não usa cache de localização
-          });
-        });
-
-        const { latitude, longitude } = position.coords;
-        const weatherResponse = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric&lang=pt`
-        );
-        const weatherData = await weatherResponse.json();
-        updateWeatherInfo(weatherData);
-        addRecentSearch(`Localização Atual`);
-      } catch (error) {
-        document.getElementById('location-message').textContent = 'Erro ao obter localização. Verifique as permissões.';
-        document.getElementById('location-message').style.color = '#ff4444';
-      } finally {
-        document.getElementById('loading').style.display = 'none';
-      }
-    }
-
-    // Função para verificar permissões e buscar a previsão do tempo automaticamente
-    function checkPermissionsAndFetchWeather() {
-      if (navigator.geolocation) {
-        // Verifica se o usuário já concedeu permissão para acessar a localização
-        navigator.permissions.query({ name: 'geolocation' }).then((permissionStatus) => {
-          if (permissionStatus.state === 'granted') {
-            // Se a permissão já foi concedida, busca a previsão do tempo automaticamente
-            fetchWeatherByGeolocation();
-          } else {
-            // Se a permissão não foi concedida, exibe uma mensagem
-            document.getElementById('location-message').textContent =
-              'Permita o acesso à localização para obter a previsão do tempo automaticamente.';
-          }
-        });
-      } else {
-        alert('Geolocalização não é suportada pelo seu navegador.');
-      }
-    }
-
     // Função para atualizar as informações do clima
     function updateWeatherInfo(data) {
       document.getElementById('weather-location').textContent = `Localização: ${data.name}, ${data.sys.country}`;
@@ -255,112 +191,48 @@
       document.getElementById('weather-sunrise').textContent = `Nascer do Sol: ${new Date(data.sys.sunrise * 1000).toLocaleTimeString()}`;
       document.getElementById('weather-sunset').textContent = `Pôr do Sol: ${new Date(data.sys.sunset * 1000).toLocaleTimeString()}`;
       document.getElementById('weather-icon').src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
-
-      updateFavoriteButton(data.name, data.sys.country);
-
-      // Envia notificação se a permissão for concedida
-      sendWeatherNotification(data);
     }
 
-    // Função para adicionar uma pesquisa recente
+    // Função para adicionar uma cidade à lista de pesquisas recentes
     function addRecentSearch(location) {
       let recentSearches = JSON.parse(localStorage.getItem(recentSearchesKey)) || [];
       if (!recentSearches.includes(location)) {
         recentSearches.unshift(location);
-        if (recentSearches.length > 5) {
+        if (recentSearches.length > 10) {
           recentSearches.pop();
         }
         localStorage.setItem(recentSearchesKey, JSON.stringify(recentSearches));
-        updateRecentSearchesList();
+        updateCityButtons();
       }
     }
 
-    // Função para atualizar a lista de pesquisas recentes
-    function updateRecentSearchesList() {
+    // Função para atualizar a lista de botões de cidade
+    function updateCityButtons() {
       const recentSearches = JSON.parse(localStorage.getItem(recentSearchesKey)) || [];
-      const recentSearchesList = document.getElementById('recent-searches-list');
-      recentSearchesList.innerHTML = recentSearches
-        .map((search) => `<li onclick="searchRecent('${search}')">${search}</li>`)
+      cityButtonsContainer.innerHTML = recentSearches
+        .map((location) => {
+          const [city, country] = location.split(', ');
+          return `<div class="city-button" onclick="searchCity('${city}', '${country}')">${city}, ${country}</div>`;
+        })
         .join('');
     }
 
-    // Função para pesquisar uma localização recente
-    function searchRecent(location) {
-      document.getElementById('location-input').value = location;
+    // Função para buscar o clima de uma cidade ao clicar no botão
+    function searchCity(city, country) {
+      document.getElementById('location-input').value = city;
+      document.getElementById('country-select').value = country;
       fetchWeather();
     }
 
     // Função para limpar a lista de pesquisas recentes
     function clearRecentSearches() {
       localStorage.removeItem(recentSearchesKey);
-      updateRecentSearchesList();
+      updateCityButtons();
     }
 
-    // Função para adicionar/remover uma localização dos favoritos
-    function toggleFavorite() {
-      const location = document.getElementById('weather-location').textContent.replace('Localização: ', '');
-      let favorites = JSON.parse(localStorage.getItem(favoritesKey)) || [];
-
-      if (favorites.includes(location)) {
-        favorites = favorites.filter((fav) => fav !== location);
-      } else {
-        favorites.push(location);
-      }
-
-      localStorage.setItem(favoritesKey, JSON.stringify(favorites));
-      updateFavoriteButton(location.split(', ')[0], location.split(', ')[1]);
-      updateFavoritesList();
-    }
-
-    // Função para atualizar o botão de favoritos
-    function updateFavoriteButton(city, country) {
-      const location = `${city}, ${country}`;
-      const favorites = JSON.parse(localStorage.getItem(favoritesKey)) || [];
-      const isFavorite = favorites.includes(location);
-
-      const favoriteButton = document.getElementById('favorite-button');
-      favoriteButton.textContent = isFavorite ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos';
-      favoriteButton.style.backgroundColor = isFavorite ? '#dc3545' : '#6f42c1';
-    }
-
-    // Função para atualizar a lista de favoritos
-    function updateFavoritesList() {
-      const favorites = JSON.parse(localStorage.getItem(favoritesKey)) || [];
-      const favoritesList = document.getElementById('favorites-list-items');
-      favoritesList.innerHTML = favorites
-        .map((fav) => `<li onclick="searchRecent('${fav}')">${fav}</li>`)
-        .join('');
-    }
-
-    // Função para exibir notificação usando o Service Worker
-    function sendWeatherNotification(weatherData) {
-      if (Notification.permission === 'granted') {
-        navigator.serviceWorker.ready.then((registration) => {
-          registration.showNotification(`Clima em ${weatherData.name}`, {
-            body: `Temperatura: ${weatherData.main.temp}°C, Condição: ${weatherData.weather[0].description}`,
-            icon: `https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`,
-          });
-        });
-      }
-    }
-
-    // Solicitar permissão para notificações
-    function requestNotificationPermission() {
-      if (Notification.permission !== 'granted') {
-        Notification.requestPermission().then((permission) => {
-          if (permission === 'granted') {
-            console.log('Permissão de notificações concedida.');
-          }
-        });
-      }
-    }
-
-    // Carrega a previsão do tempo ao abrir a página
+    // Atualiza a lista de botões ao carregar a página
     window.onload = () => {
-      updateRecentSearchesList();
-      updateFavoritesList();
-      requestNotificationPermission();
-      checkPermissionsAndFetchWeather(); // Busca a previsão do tempo automaticamente
+      updateCityButtons();
     };
   </script>
 </body>
