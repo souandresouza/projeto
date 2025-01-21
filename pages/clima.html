@@ -59,12 +59,15 @@
       <img class="weather-icon" id="weather-icon" src="" alt="Ícone do clima">
       <p id="weather-location">Localização: Carregando...</p>
       <p id="weather-temp">Temperatura: Carregando...</p>
+      <p id="weather-feels-like">Sensação Térmica: Carregando...</p>
       <p id="weather-condition">Condição: Carregando...</p>
       <p id="weather-humidity">Umidade: Carregando...</p>
       <p id="weather-wind">Vento: Carregando...</p>
-      <p id="weather-pressure">Pressão: Carregando...</p>
-      <p id="weather-sunrise">Nascer do Sol: Carregando...</p>
-      <p id="weather-sunset">Pôr do Sol: Carregando...</p>
+      <p id="weather-wind-direction">Direção do Vento: Carregando...</p>
+      <p id="weather-visibility">Visibilidade: Carregando...</p>
+      <p id="weather-clouds">Nuvens: Carregando...</p>
+      <p id="weather-rain">Chuva: Carregando...</p>
+      <p id="weather-snow">Neve: Carregando...</p>
     </div>
 
     <!-- Inputs e Botões -->
@@ -205,13 +208,23 @@
     function updateWeatherInfo(data) {
       document.getElementById('weather-location').textContent = `Localização: ${data.name}, ${data.sys.country}`;
       document.getElementById('weather-temp').textContent = `Temperatura: ${data.main.temp}°C`;
+      document.getElementById('weather-feels-like').textContent = `Sensação Térmica: ${data.main.feels_like}°C`;
       document.getElementById('weather-condition').textContent = `Condição: ${data.weather[0].description}`;
       document.getElementById('weather-humidity').textContent = `Umidade: ${data.main.humidity}%`;
       document.getElementById('weather-wind').textContent = `Vento: ${(data.wind.speed * 3.6).toFixed(2)} km/h`;
-      document.getElementById('weather-pressure').textContent = `Pressão: ${data.main.pressure} hPa`;
-      document.getElementById('weather-sunrise').textContent = `Nascer do Sol: ${new Date(data.sys.sunrise * 1000).toLocaleTimeString()}`;
-      document.getElementById('weather-sunset').textContent = `Pôr do Sol: ${new Date(data.sys.sunset * 1000).toLocaleTimeString()}`;
+      document.getElementById('weather-wind-direction').textContent = `Direção do Vento: ${getWindDirection(data.wind.deg)}`;
+      document.getElementById('weather-visibility').textContent = `Visibilidade: ${(data.visibility / 1000).toFixed(1)} km`;
+      document.getElementById('weather-clouds').textContent = `Nuvens: ${data.clouds.all}%`;
+      document.getElementById('weather-rain').textContent = `Chuva: ${data.rain ? `${data.rain['1h']} mm` : '0 mm'}`;
+      document.getElementById('weather-snow').textContent = `Neve: ${data.snow ? `${data.snow['1h']} cm` : '0 cm'}`;
       document.getElementById('weather-icon').src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+    }
+
+    // Função para converter graus em direção do vento
+    function getWindDirection(degrees) {
+      const directions = ['Norte', 'Nordeste', 'Leste', 'Sudeste', 'Sul', 'Sudoeste', 'Oeste', 'Noroeste'];
+      const index = Math.round((degrees % 360) / 45);
+      return directions[index % 8];
     }
 
     // Função para adicionar uma cidade à lista de pesquisas recentes
