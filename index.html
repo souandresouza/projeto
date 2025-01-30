@@ -11,7 +11,7 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="assets/icons/favicon-32x32.png" type="image/png">
   <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     /* Reset CSS */
     * {
@@ -88,16 +88,28 @@
     }
 
     #current-time {
-      font-size: 6rem;
-      font-weight: bold;
-      color: #e0e0e0; /* Texto claro no tema escuro */
-      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400;
+      line-height: 1.2;
     }
 
     #current-date {
-      font-size: 1.5rem;
-      color: #666; /* Cinza médio */
-      margin-top: 10px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 18px;
+      line-height: 26px;
+      font-weight: 400;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 600px) {
+      #current-time {
+        font-size: 4rem;
+      }
+      
+      #current-date {
+        font-size: 16px;
+        line-height: 22px;
+      }
     }
 
     /* Contador Regressivo */
