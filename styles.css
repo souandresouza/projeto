@@ -4,9 +4,9 @@ body {
   background-color: #121212; /* Fundo escuro */
   color: #e0e0e0; /* Texto claro */
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column; /* Alinha elementos verticalmente */
+  align-items: center; /* Centraliza horizontalmente */
+  justify-content: center; /* Centraliza verticalmente */
   height: 100vh;
   margin: 0;
   overflow: hidden;
@@ -62,6 +62,7 @@ body {
   line-height: 1;
   color: #ffffff; /* Hora em branco */
   text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  text-align: center; /* Centraliza o texto */
 }
 
 /* Estilo da data */
@@ -70,6 +71,7 @@ body {
   margin-top: 10px;
   color: #b0b0b0; /* Data em cinza claro */
   letter-spacing: 1px;
+  text-align: center; /* Centraliza o texto */
 }
 
 /* Estilo da frase adicional */
@@ -77,16 +79,17 @@ body {
   font-size: 1.2rem;
   margin-top: 5px;
   color: #888; /* Cor mais clara para a frase adicional */
+  text-align: center; /* Centraliza o texto */
 }
 
 /* Estilo da contagem regressiva */
 .countdown-container {
   margin-top: 30px;
   display: grid;
-  grid-template-columns: repeat(4, auto);
+  grid-template-columns: repeat(4, auto); /* 4 colunas para desktop */
   gap: 20px;
-  justify-content: center;
-  text-align: center;
+  justify-content: center; /* Centraliza os itens */
+  text-align: center; /* Centraliza o texto dentro dos itens */
 }
 .countdown-item {
   font-size: 2rem;
@@ -106,6 +109,7 @@ body {
   margin-top: 20px;
   font-size: 1.2rem;
   color: #ff5252;
+  text-align: center; /* Centraliza o texto */
 }
 
 /* Botões */
@@ -129,6 +133,7 @@ body {
   margin-top: 20px;
   padding: 10px;
   font-size: 1rem;
+  width: 200px; /* Largura fixa para evitar problemas */
 }
 
 /* Responsividade */
@@ -137,7 +142,7 @@ body {
     font-size: 3rem; /* Reduz o tamanho do relógio em telas pequenas */
   }
   .countdown-container {
-    grid-template-columns: repeat(2, auto); /* Ajusta a contagem regressiva para duas colunas */
+    grid-template-columns: repeat(2, auto); /* 2 colunas para mobile */
     gap: 10px;
   }
 }
