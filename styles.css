@@ -64,4 +64,80 @@ body {
   text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-/* Outros estilos... */
+/* Estilo da data */
+#current-date {
+  font-size: 1.5rem;
+  margin-top: 10px;
+  color: #b0b0b0; /* Data em cinza claro */
+  letter-spacing: 1px;
+}
+
+/* Estilo da frase adicional */
+#additional-info {
+  font-size: 1.2rem;
+  margin-top: 5px;
+  color: #888; /* Cor mais clara para a frase adicional */
+}
+
+/* Estilo da contagem regressiva */
+.countdown-container {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 20px;
+  justify-content: center;
+  text-align: center;
+}
+.countdown-item {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+.countdown-label {
+  font-size: 1rem;
+  color: #b0b0b0;
+  margin-top: 5px;
+}
+
+/* Mensagem de timeout */
+#timeout-message {
+  display: none;
+  margin-top: 20px;
+  font-size: 1.2rem;
+  color: #ff5252;
+}
+
+/* Botões */
+.button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #8b0000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+.button:hover {
+  background-color: #6b0000;
+}
+
+/* Entrada de data */
+#datetime {
+  margin-top: 20px;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  #current-time {
+    font-size: 3rem; /* Reduz o tamanho do relógio em telas pequenas */
+  }
+  .countdown-container {
+    grid-template-columns: repeat(2, auto); /* Ajusta a contagem regressiva para duas colunas */
+    gap: 10px;
+  }
+}
