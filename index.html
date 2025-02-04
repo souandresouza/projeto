@@ -3,81 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <meta name="description" content="CountClock: Um relógio e contador regressivo com funcionalidades de clima, notificações e muito mais.">
-  <meta name="author" content="Andre Souza">
-  <meta name="keywords" content="relógio, contador regressivo, clima, PWA, notificações">
-  <title>CountClock</title>
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="assets/icons/favicon-32x32.png" type="image/png">
-  <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <title>Relógio e Contagem Regressiva</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Menu Suspenso -->
-  <div class="menu-container">
-    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-    <div class="menu-dropdown" id="menu-dropdown">
-      <button onclick="window.location.href='pages/clima.html'">Clima</button>
-      <button onclick="window.location.href='pages/configuracoes.html'">Permissões</button>
+  <!-- Menu Hamburguer -->
+  <div class="menu-icon" id="menu-icon">&#9776;</div>
+  <nav class="menu" id="menu">
+    <ul>
+      <li><a href="pages/clima.html">Clima</a></li>
+      <li><a href="pages/configuracoes.html">Configurações</a></li>
+    </ul>
+  </nav>
+
+  <!-- Relógio, data e frase adicional -->
+  <div id="current-time">Carregando...</div>
+  <div id="current-date">Carregando...</div>
+  <div id="additional-info">Carregando...</div>
+
+  <!-- Contagem regressiva -->
+  <div class="countdown-container">
+    <div>
+      <div class="countdown-item" id="days">0</div>
+      <div class="countdown-label">Dias</div>
+    </div>
+    <div>
+      <div class="countdown-item" id="hours">0</div>
+      <div class="countdown-label">Horas</div>
+    </div>
+    <div>
+      <div class="countdown-item" id="minutes">0</div>
+      <div class="countdown-label">Minutos</div>
+    </div>
+    <div>
+      <div class="countdown-item" id="seconds">0</div>
+      <div class="countdown-label">Segundos</div>
     </div>
   </div>
+  <div id="timeout-message">Contagem regressiva concluída!</div>
 
-  <div class="container">
-    <!-- Relógio -->
-    <div id="clock-container">
-      <div class="clock" id="current-time">--:--:--</div>
-      <div class="date" id="current-date">Carregando...</div>
-    </div>
-
-    <!-- Contador Regressivo -->
-    <div id="countdown-container">
-      <div class="countdown-container">
-        <div class="countdown-item">
-          <span id="days">0</span>
-          <label id="days-label">Dias</label>
-        </div>
-        <div class="countdown-item">
-          <span id="hours">0</span>
-          <label id="hours-label">Horas</label>
-        </div>
-        <div class="countdown-item">
-          <span id="minutes">0</span>
-          <label id="minutes-label">Minutos</label>
-        </div>
-        <div class="countdown-item">
-          <span id="seconds">0</span>
-          <label id="seconds-label">Segundos</label>
-        </div>
-      </div>
-      <div class="input-container">
-        <input type="datetime-local" id="datetime" class="datetime-input" />
-      </div>
-      <div class="buttons-container">
-        <button id="start-countdown" onclick="startCountdown()">Iniciar</button>
-        <button onclick="saveCountdown()">Salvar</button>
-        <button onclick="resetCountdown()">Zerar</button>
-      </div>
-    </div>
-
-    <!-- Mensagem de Tempo Esgotado -->
-    <div id="timeout-message">
-      Tempo Esgotado!
-    </div>
-  </div>
+  <!-- Entrada de data e botões -->
+  <input type="datetime-local" id="datetime">
+  <button class="button" id="start-countdown">Iniciar Contagem Regressiva</button>
+  <button class="button" id="reset-countdown">Reiniciar</button>
 
   <script src="script.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js').then(registration => {
-          console.log('ServiceWorker registrado com sucesso:', registration);
-        }).catch(error => {
-          console.log('Falha ao registrar o ServiceWorker:', error);
-        });
-      });
-    }
-  </script>
 </body>
 </html>
