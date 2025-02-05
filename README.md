@@ -3,7 +3,7 @@ CountClock
 
 Build Status: Passing License: MIT Last Commit: Recent
 
-![CountClock Logo](/assets/icons/icon-192x192.png)
+![CountClock Logo](/assets/icons/web-app-manifest-192x192.png)
 
 CountClock é um aplicativo web que combina um relógio em tempo real com uma contagem regressiva personalizável. Ele também inclui funcionalidades como previsão do tempo, notificações e suporte offline.
 
