@@ -43,7 +43,6 @@ async function updateClock() {
   const dayOfYear = getDayOfYear(now);
   const weekdayName = getWeekdayName(now);
   const additionalInfo = `Hoje é ${weekdayName}, ${dayOfYear}º dia do ano`;
-
   document.getElementById('current-time').textContent = time;
   document.getElementById('current-date').textContent = date;
   document.getElementById('additional-info').textContent = additionalInfo;
@@ -53,12 +52,21 @@ async function updateClock() {
 function updateCountdown(targetDate) {
   const now = new Date().getTime();
   const distance = targetDate - now;
+
   if (distance < 0) {
     clearInterval(countdownInterval);
     document.getElementById('timeout-message').style.display = 'block';
     localStorage.removeItem('countdownTarget');
+
+    // Tocar o áudio quando a contagem regressiva terminar
+    const audio = new Audio('https://github.com/souandresouza/count-clock/raw/refs/heads/main/assets/sounds/contagem.mp3');
+    audio.play().catch(error => {
+      console.error('Erro ao reproduzir o áudio:', error);
+    });
+
     return;
   }
+
   const days = Math.floor(distance / (1000 * 60 * 60 * 24));
   const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -79,6 +87,7 @@ function startCountdown() {
   }
   const targetDate = new Date(targetDateInput).getTime();
   const now = new Date().getTime();
+
   if (isNaN(targetDate) || targetDate <= now) {
     alert('Por favor, insira uma data futura.');
     return;
