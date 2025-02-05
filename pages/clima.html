@@ -15,6 +15,68 @@
             line-height: 1.6;
         }
 
+        /* Menu suspenso */
+        .navbar {
+            background-color: #1e1e1e; /* Fundo escuro para o menu */
+            padding: 10px;
+            display: flex-box;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #bb86fc; /* Cor roxa para destaque */
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-button {
+            background-color: #bb86fc; /* Botão roxo */
+            color: #121212;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .dropdown-button:hover {
+            background-color: #9c27b0; /* Efeito hover mais escuro */
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #1e1e1e; /* Fundo escuro para o dropdown */
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            color: #e0e0e0; /* Texto claro */
+            padding: 10px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #bb86fc; /* Fundo roxo ao passar o mouse */
+            color: #121212;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
         /* Container principal */
         .container {
             max-width: 600px;
@@ -23,13 +85,6 @@
             background-color: #1e1e1e; /* Fundo do container */
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Cabeçalho */
-        h1 {
-            text-align: center;
-            color: #bb86fc; /* Cor roxa para destaque */
-            margin-bottom: 20px;
         }
 
         /* Inputs e botões */
@@ -104,8 +159,20 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Menu suspenso -->
+    <div class="navbar">
         <h1>Clima - CountClock</h1>
+        <div class="dropdown">
+            <button class="dropdown-button">Menu</button>
+            <div class="dropdown-content">
+                <a href="../index.html">Página Inicial</a>
+                <a href="configuracoes.html">Configurações</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="container">
         <div>
             <label for="city">Cidade:</label>
             <input type="text" id="city" placeholder="Digite o nome da cidade (ex: Dubai)">
