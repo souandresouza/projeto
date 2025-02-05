@@ -4,38 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clima - CountClock</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styleclima.css">
 </head>
 <body>
-    <!-- Menu hamburguer -->
-    <div class="menu-icon" onclick="toggleMenu()">☰</div>
-    <div class="menu">
-        <ul>
-            <li><a href="../index.html">Página Inicial</a></li>
-            <li><a href="configuracoes.html">Configurações</a></li>
-        </ul>
-    </div>
-
-    <!-- Conteúdo principal -->
     <div class="container">
         <div>
-            <label for="city">Cidade:</label>
-            <input type="text" id="city" placeholder="Digite o nome da cidade (ex: Dubai)">
+            <h1>Previsão do Tempo</h1>
+            <input type="text" id="city" class="input" placeholder="Digite o nome da cidade">
+            <button onclick="searchWeather()">Buscar Clima</button>
+
+            <!-- Ícone do clima -->
+            <img id="weather-icon" class="weather-icon" src="" alt="Ícone do clima">
+
+            <!-- Informações do clima -->
+            <div class="weather-info">
+                <div>Localização: <span id="location">Carregando...</span></div>
+                <div>Temperatura: <span id="temperature">Carregando...</span></div>
+                <div>Sensação Térmica: <span id="feels-like">Carregando...</span></div>
+                <div>Condição: <span id="condition">Carregando...</span></div>
+                <div>Umidade: <span id="humidity">Carregando...</span></div>
+                <div>Vento: <span id="wind">Carregando...</span></div>
+                <div>Direção do Vento: <span id="wind-direction">Carregando...</span></div>
+                <div>Visibilidade: <span id="visibility">Carregando...</span></div>
+                <div>Nuvens: <span id="clouds">Carregando...</span></div>
+                <div>Chuva: <span id="rain">Carregando...</span></div>
+                <div>Neve: <span id="snow">Carregando...</span></div>
+            </div>
         </div>
-        <button onclick="searchWeather()">Buscar Clima</button>
-        <div class="weather-info">
-            <div>Localização: <span id="location">Carregando...</span></div>
-            <div>Temperatura: <span id="temperature">Carregando...</span></div>
-            <div>Sensação Térmica: <span id="feels-like">Carregando...</span></div>
-            <div>Condição: <span id="condition">Carregando...</span></div>
-            <div>Umidade: <span id="humidity">Carregando...</span></div>
-            <div>Vento: <span id="wind">Carregando...</span></div>
-            <div>Direção do Vento: <span id="wind-direction">Carregando...</span></div>
-            <div>Visibilidade: <span id="visibility">Carregando...</span></div>
-            <div>Nuvens: <span id="clouds">Carregando...</span></div>
-            <div>Chuva: <span id="rain">Carregando...</span></div>
-            <div>Neve: <span id="snow">Carregando...</span></div>
-        </div>
+
+        <!-- Cidades pesquisadas -->
         <div class="city-links">
             <h3>Cidades Pesquisadas:</h3>
             <button onclick="clearRecentSearches()">Limpar Pesquisas Recentes</button>
@@ -44,33 +41,25 @@
     </div>
 
     <script>
-        // Função para alternar o menu hamburguer
-        function toggleMenu() {
-            const menu = document.querySelector('.menu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        }
-
-        // Constantes e variáveis globais
-        const apiKey = 'e7314838ebd86431d951d53c59e7fd20'; // Substitua 'xxxxxx' pela sua chave da API OpenWeatherMap
-        const recentSearchesKey = 'recentSearches'; // Chave para armazenar pesquisas recentes
-
         // Função para buscar o clima
-        async function searchWeather(city) {
-            const inputCity = city || document.getElementById('city').value.trim();
-            if (!inputCity) {
+        async function searchWeather() {
+            const city = document.getElementById('city').value.trim();
+            if (!city) {
                 alert('Por favor, insira o nome da cidade.');
                 return;
             }
+
+            const apiKey = 'e7314838ebd86431d951d53c59e7fd20'; // Substitua pela sua chave da API
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric&lang=pt_br`;
+
             try {
-                // URL da API OpenWeatherMap
-                const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(inputCity)}&appid=${apiKey}&units=metric&lang=pt_br`;
-                // Fazendo a requisição à API
                 const response = await fetch(apiUrl);
                 if (!response.ok) {
                     throw new Error('Cidade não encontrada ou erro na API.');
                 }
                 const data = await response.json();
-                // Atualizando os dados na página
+
+                // Atualizar os dados na página
                 document.getElementById('location').textContent = `${data.name}, ${data.sys.country}`;
                 document.getElementById('temperature').textContent = `${data.main.temp}°C`;
                 document.getElementById('feels-like').textContent = `${data.main.feels_like}°C`;
@@ -82,10 +71,11 @@
                 document.getElementById('clouds').textContent = `${data.clouds.all}%`;
                 document.getElementById('rain').textContent = data.rain ? `${data.rain['1h']} mm` : '0 mm';
                 document.getElementById('snow').textContent = data.snow ? `${data.snow['1h']} mm` : '0 mm';
-                // Salvando a pesquisa recente
-                saveRecentSearch(inputCity);
-                // Atualizar a lista de cidades pesquisadas
-                updateRecentCitiesList();
+
+                // Atualizar o ícone do clima
+                const iconCode = data.weather[0].icon;
+                const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+                document.getElementById('weather-icon').src = iconUrl;
             } catch (error) {
                 alert(error.message || 'Erro ao buscar o clima.');
             }
@@ -98,24 +88,15 @@
             return directions[index];
         }
 
-        // Função para salvar pesquisas recentes
-        function saveRecentSearch(city) {
-            let recentSearches = JSON.parse(localStorage.getItem(recentSearchesKey)) || [];
-            if (!recentSearches.includes(city)) {
-                recentSearches.push(city);
-                localStorage.setItem(recentSearchesKey, JSON.stringify(recentSearches));
-            }
-        }
-
         // Função para limpar pesquisas recentes
         function clearRecentSearches() {
-            localStorage.removeItem(recentSearchesKey);
+            localStorage.removeItem('recentSearches');
             updateRecentCitiesList();
         }
 
         // Função para atualizar a lista de cidades pesquisadas
         function updateRecentCitiesList() {
-            const recentSearches = JSON.parse(localStorage.getItem(recentSearchesKey)) || [];
+            const recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
             const recentCitiesDiv = document.getElementById('recent-cities');
             recentCitiesDiv.innerHTML = '';
             recentSearches.forEach(city => {
