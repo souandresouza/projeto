@@ -14,10 +14,8 @@ body {
 
 /* Container principal */
 .container {
-    max-width: 1200px; /* Largura máxima para desktop */
-    width: 90%; /* Largura responsiva */
-    margin: 0 auto;
-    padding: 20px;
+    width: 1300px; /* Largura fixa para desktop */
+    height: 610px; /* Altura fixa para desktop */
     background-color: #1e1e1e; /* Fundo mais claro para o container */
     border-radius: 15px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -25,123 +23,55 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around; /* Distribui os elementos uniformemente */
+    padding: 20px;
+    box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
 }
 
-/* Título */
-h1 {
-    font-size: 2rem;
-    color: #bb86fc; /* Cor roxa para destaque */
-    margin-bottom: 20px;
-}
-
-/* Input estilizado */
-.input {
-    color: white;
-    border: 2px solid #8707ff;
-    border-radius: 10px;
-    padding: 10px 25px;
-    background: transparent;
-    max-width: 190px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-.input:focus {
-    outline: none;
-    box-shadow: 2px 2px 15px #8707ff inset;
-}
-
-/* Botão de busca */
-button {
-    margin-top: 15px;
-    padding: 10px 20px;
-    background-color: #8707ff; /* Cor roxa */
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-}
-button:hover {
-    background-color: #6a00cc; /* Cor roxa mais escura */
-}
-
-/* Ícone do clima */
-.weather-icon {
-    margin-top: 20px;
-    width: 150px; /* Aumentado para melhor visualização no desktop */
-    height: 150px;
-    object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-/* Detalhes do clima */
-.weather-info {
-    margin-top: 20px;
-    text-align: left;
-    width: 100%;
-    max-width: 800px; /* Limita a largura para desktop */
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsivo */
-    gap: 15px;
-}
-.weather-info div {
-    margin-bottom: 10px;
-    font-size: 1rem;
-    color: #b0b0b0; /* Cinza claro para detalhes */
-}
-
-/* Links de cidades pesquisadas */
-.city-links {
-    margin-top: 20px;
-    text-align: left;
-    width: 100%;
-    max-width: 800px; /* Limita a largura para desktop */
-}
-.city-links a {
-    display: block;
-    margin: 5px 0;
-    text-decoration: none;
-    color: #bb86fc; /* Cor roxa para links */
-    cursor: pointer;
-}
-.city-links a:hover {
-    text-decoration: underline;
-}
-
-/* Botão de limpar pesquisas */
-.city-links button {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #cf6679; /* Vermelho suave para alerta */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-}
-.city-links button:hover {
-    background-color: #b00020; /* Vermelho mais escuro */
-}
-
-/* Responsividade */
-@media (min-width: 768px) {
+/* Ajustes para modo retrato (celular) */
+@media (max-width: 610px) and (orientation: portrait) {
     .container {
-        flex-direction: row; /* Layout horizontal no desktop */
-        justify-content: space-between;
-        align-items: flex-start;
+        width: 100%; /* Ocupa toda a largura da tela */
+        height: 100vh; /* Ocupa toda a altura da tela */
+        max-width: 610px; /* Limita a largura máxima */
+        max-height: 1300px; /* Limita a altura máxima */
+        padding: 10px; /* Reduz o padding para economizar espaço */
+    }
+
+    h1 {
+        font-size: 2rem; /* Reduz o tamanho do título */
+    }
+
+    .input {
+        max-width: 100%; /* O input ocupa toda a largura disponível */
+        font-size: 1rem; /* Reduz o tamanho da fonte */
+    }
+
+    button {
+        font-size: 1rem; /* Reduz o tamanho da fonte */
+        padding: 8px 16px; /* Reduz o padding */
+    }
+
+    .weather-icon {
+        width: 150px; /* Reduz o tamanho do ícone */
+        height: 150px;
     }
 
     .weather-info {
-        text-align: left;
-        width: 60%; /* Ocupa 60% da largura */
+        grid-template-columns: 1fr; /* Uma única coluna para detalhes */
+        gap: 10px; /* Reduz o espaçamento */
     }
 
-    .city-links {
-        width: 35%; /* Ocupa 35% da largura */
-        text-align: left;
+    .weather-info div {
+        font-size: 0.9rem; /* Reduz o tamanho da fonte */
+    }
+
+    .city-links a {
+        font-size: 0.9rem; /* Reduz o tamanho da fonte */
+    }
+
+    .city-links button {
+        font-size: 0.9rem; /* Reduz o tamanho da fonte */
+        padding: 8px; /* Reduz o padding */
     }
 }
