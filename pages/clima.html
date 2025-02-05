@@ -3,27 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Previsão do Tempo</title>
-    <link rel="stylesheet" href="../css/styleclima.css">
+    <title>Clima - CountClock</title>
+    <style>
+        /* Estilo geral */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #121212; /* Fundo escuro */
+            color: #e0e0e0; /* Texto claro */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        /* Estilo do menu hamburguer */
+        .menu-icon {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #ffffff;
+            z-index: 1000;
+        }
+        /* Estilo do menu suspenso */
+        .menu {
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            background-color: #1a1a1a;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            display: none; /* Inicialmente oculto */
+            z-index: 999;
+        }
+        .menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .menu ul li {
+            margin: 10px 0;
+        }
+        .menu ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+        .menu ul li a:hover {
+            color: #8b0000;
+        }
+        /* Estilo do relógio principal */
+        #current-time {
+            font-size: 6rem; /* Tamanho maior para destacar o relógio */
+            font-weight: bold;
+            letter-spacing: 4px;
+            margin: 0;
+            line-height: 1;
+            color: #ffffff; /* Hora em branco */
+            text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            text-align: center; /* Centraliza o texto */
+        }
+        /* Estilo da data */
+        #current-date {
+            font-size: 1.5rem;
+            margin-top: 10px;
+            color: #b0b0b0; /* Data em cinza claro */
+            letter-spacing: 1px;
+            text-align: center; /* Centraliza o texto */
+        }
+        /* Estilo da frase adicional */
+        #additional-info {
+            font-size: 1.2rem;
+            margin-top: 5px;
+            color: #888; /* Cor mais clara para a frase adicional */
+            text-align: center; /* Centraliza o texto */
+        }
+        /* Estilo da contagem regressiva */
+        .countdown-container {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(4, auto); /* 4 colunas para desktop */
+            gap: 20px;
+            justify-content: center; /* Centraliza os itens */
+            text-align: center; /* Centraliza o texto dentro dos itens */
+        }
+        .countdown-item {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .countdown-label {
+            font-size: 1rem;
+            color: #b0b0b0;
+            margin-top: 5px;
+        }
+        /* Mensagem de timeout */
+        #timeout-message {
+            display: none;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #ff5252;
+            text-align: center; /* Centraliza o texto */
+        }
+        /* Botões */
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #8b0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #6b0000;
+        }
+        /* Entrada de dados */
+        input[type="text"] {
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 1rem;
+            width: 200px; /* Largura fixa para evitar problemas */
+            background-color: #1a1a1a; /* Fundo escuro */
+            color: #ffffff; /* Texto claro */
+            border: 1px solid #444;
+            border-radius: 5px;
+        }
+        /* Responsividade */
+        @media (max-width: 600px) {
+            #current-time {
+                font-size: 4rem; /* Reduz o tamanho do relógio em telas pequenas */
+            }
+            .countdown-container {
+                grid-template-columns: repeat(2, auto); /* 2 colunas para mobile */
+                gap: 10px;
+            }
+        }
+
+        /* Estilos específicos para o layout do clima */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #1e1e1e; /* Fundo escuro */
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        .weather-info div {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .city-links a {
+            display: block;
+            margin: 5px 0;
+            text-decoration: none;
+            color: #bb86fc; /* Cor roxa para links */
+            cursor: pointer;
+        }
+        .city-links a:hover {
+            text-decoration: underline;
+        }
+        .city-links button {
+            width: 100%;
+            padding: 10px;
+            background-color: #cf6679; /* Vermelho suave para alerta */
+            color: #121212;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .city-links button:hover {
+            background-color: #b00020; /* Vermelho mais escuro no hover */
+        }
+    </style>
 </head>
 <body>
+    <!-- Menu hamburguer -->
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+    <div class="menu">
+        <ul>
+            <li><a href="../index.html">Página Inicial</a></li>
+            <li><a href="configuracoes.html">Configurações</a></li>
+        </ul>
+    </div>
+
+    <!-- Conteúdo principal -->
     <div class="container">
-        <h1>Previsão do Tempo</h1>
-        <p>Digite sua cidade para ver a previsão atual.</p>
-        <input type="text" class="input" placeholder="Digite sua cidade">
-        <button>Pesquisar</button>
-        <img src="weather-icon.png" alt="Ícone do Clima" class="weather-icon">
+        <div>
+            <label for="city">Cidade:</label>
+            <input type="text" id="city" placeholder="Digite o nome da cidade (ex: Dubai)">
+        </div>
+        <button onclick="searchWeather()">Buscar Clima</button>
         <div class="weather-info">
-            <div>Temperatura: 25°C</div>
-            <div>Umidade: 60%</div>
-            <div>Vento: 10 km/h</div>
+            <div>Localização: <span id="location">Carregando...</span></div>
+            <div>Temperatura: <span id="temperature">Carregando...</span></div>
+            <div>Sensação Térmica: <span id="feels-like">Carregando...</span></div>
+            <div>Condição: <span id="condition">Carregando...</span></div>
+            <div>Umidade: <span id="humidity">Carregando...</span></div>
+            <div>Vento: <span id="wind">Carregando...</span></div>
+            <div>Direção do Vento: <span id="wind-direction">Carregando...</span></div>
+            <div>Visibilidade: <span id="visibility">Carregando...</span></div>
+            <div>Nuvens: <span id="clouds">Carregando...</span></div>
+            <div>Chuva: <span id="rain">Carregando...</span></div>
+            <div>Neve: <span id="snow">Carregando...</span></div>
         </div>
         <div class="city-links">
-            <a href="#">Nova York</a>
-            <a href="#">Tóquio</a>
-            <a href="#">Londres</a>
-            <button>Limpar Pesquisas</button>
+            <h3>Cidades Pesquisadas:</h3>
+            <button onclick="clearRecentSearches()">Limpar Pesquisas Recentes</button>
+            <div id="recent-cities"></div>
         </div>
     </div>
+
+    <script>
+        // Função para alternar o menu hamburguer
+        function toggleMenu() {
+            const menu = document.querySelector('.menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Constantes e variáveis globais
+        const apiKey = 'e7314838ebd86431d951d53c59e7fd20'; // Substitua 'xxxxxx' pela sua chave da API OpenWeatherMap
+        const recentSearchesKey = 'recentSearches'; // Chave para armazenar pesquisas recentes
+
+        // Função para buscar o clima
+        async function searchWeather(city) {
+            const inputCity = city || document.getElementById('city').value.trim();
+            if (!inputCity) {
+                alert('Por favor, insira o nome da cidade.');
+                return;
+            }
+            try {
+                // URL da API OpenWeatherMap
+                const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(inputCity)}&appid=${apiKey}&units=metric&lang=pt_br`;
+                // Fazendo a requisição à API
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Cidade não encontrada ou erro na API.');
+                }
+                const data = await response.json();
+                // Atualizando os dados na página
+                document.getElementById('location').textContent = `${data.name}, ${data.sys.country}`;
+                document.getElementById('temperature').textContent = `${data.main.temp}°C`;
+                document.getElementById('feels-like').textContent = `${data.main.feels_like}°C`;
+                document.getElementById('condition').textContent = data.weather[0].description;
+                document.getElementById('humidity').textContent = `${data.main.humidity}%`;
+                document.getElementById('wind').textContent = `${data.wind.speed} m/s`;
+                document.getElementById('wind-direction').textContent = getWindDirection(data.wind.deg);
+                document.getElementById('visibility').textContent = `${data.visibility / 1000} km`;
+                document.getElementById('clouds').textContent = `${data.clouds.all}%`;
+                document.getElementById('rain').textContent = data.rain ? `${data.rain['1h']} mm` : '0 mm';
+                document.getElementById('snow').textContent = data.snow ? `${data.snow['1h']} mm` : '0 mm';
+                // Salvando a pesquisa recente
+                saveRecentSearch(inputCity);
+                // Atualizar a lista de cidades pesquisadas
+                updateRecentCitiesList();
+            } catch (error) {
+                alert(error.message || 'Erro ao buscar o clima.');
+            }
+        }
+
+        // Função para obter a direção do vento
+        function getWindDirection(degrees) {
+            const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+            const index = Math.round((degrees % 360) / 45) % 8;
+            return directions[index];
+        }
+
+        // Função para salvar pesquisas recentes
+        function saveRecentSearch(city) {
+            let recentSearches = JSON.parse(localStorage.getItem(recentSearchesKey)) || [];
+            if (!recentSearches.includes(city)) {
+                recentSearches.push(city);
+                localStorage.setItem(recentSearchesKey, JSON.stringify(recentSearches));
+            }
+        }
+
+        // Função para limpar pesquisas recentes
+        function clearRecentSearches() {
+            localStorage.removeItem(recentSearchesKey);
+            updateRecentCitiesList();
+        }
+
+        // Função para atualizar a lista de cidades pesquisadas
+        function updateRecentCitiesList() {
+            const recentSearches = JSON.parse(localStorage.getItem(recentSearchesKey)) || [];
+            const recentCitiesDiv = document.getElementById('recent-cities');
+            recentCitiesDiv.innerHTML = '';
+            recentSearches.forEach(city => {
+                const link = document.createElement('a');
+                link.textContent = city;
+                link.href = '#';
+                link.onclick = () => searchWeather(city);
+                recentCitiesDiv.appendChild(link);
+            });
+        }
+
+        // Carregar pesquisas recentes ao carregar a página
+        window.onload = () => {
+            updateRecentCitiesList();
+        };
+    </script>
 </body>
 </html>
