@@ -142,12 +142,182 @@ body {
 }
 
 /* Responsividade */
-@media (max-width: 600px) {
-  #current-time {
-    font-size: 4rem; /* Reduz o tamanho do relógio em telas pequenas */
+@media screen and (max-width: 1000px) {
+  /* Estilo do menu hamburguer */
+  .menu-icon {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #ffffff;
+    z-index: 1000;
+    max-width: 5%;
+    min-width: 2%;
   }
+  
+  /* Estilo do menu suspenso */
+  .menu {
+    position: absolute;
+    top: 60px;
+    left: 20px;
+    background-color: #1a1a1a;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    display: none; /* Inicialmente oculto */
+    z-index: 999;
+  }
+  .menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .menu ul li {
+    margin: 10px 0;
+  }
+  .menu ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s;
+  }
+  .menu ul li a:hover {
+    color: #bb4add;
+  }
+  
+  /* Estilo do relógio principal */
+  #current-time {
+    max-width: 25%;
+    min-width: 25%;
+    margin-top: 5%;
+    margin-left: 5%;
+    margin-right: 50%;
+    font-size: 3rem; /* Tamanho maior para destacar o relógio */
+    font-weight: bold;
+    letter-spacing: 4px;
+    line-height: 1;
+    position: relative; /* Posiciona o elemento em relação ao pai */
+    color: #ffffff;
+    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    text-align: center; /* Centraliza o texto */
+  }
+  
+  /* Estilo da data */
+  #current-date {
+    font-size: 1.5rem;
+    margin-top: 5px;
+    color: #b0b0b0;
+    position: relative; /* Posiciona o elemento em relação ao pai */
+    letter-spacing: 1px;
+    text-align: center; /* Centraliza o texto */
+  }
+  
+  /* Estilo da frase adicional */
+  #additional-info {
+    font-size: 1rem;
+    margin-top: 5px;
+    color: #888; 
+    position: relative; /* Posiciona o elemento em relação ao pai */
+    text-align: center; /* Centraliza o texto */
+  }
+  
+  /* Estilo da contagem regressiva */
   .countdown-container {
-    grid-template-columns: repeat(2, auto); /* 2 colunas para mobile */
-    gap: 10px;
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(4, auto); /* 4 colunas para desktop */
+    gap: 20px;
+    position: relative; /* Posiciona o elemento em relação ao pai */
+    justify-content: center; /* Centraliza os itens */
+    text-align: center; /* Centraliza o texto dentro dos itens */
+  }
+  .countdown-item {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffffff;
+    position: relative;
+    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+  .countdown-label {
+    font-size: 1rem;
+    color: #b0b0b0;
+    margin-top: 5px;
+  }
+  
+  /* Mensagem de timeout */
+  #timeout-message {
+    display: none;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #ff5252;
+    text-align: center; /* Centraliza o texto */
+  }
+  
+  /* Botões */
+  .button {
+  --color: #670e9bfa;
+  padding: 0.8em 1em;
+  background-color: transparent;
+  border-radius: .3em;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  cursor: pointer;
+  transition: .5s;
+  font-weight: 400;
+  font-size: 17px;
+  border: 1px solid;
+  font-family: inherit;
+  text-transform: uppercase;
+  color: var(--color);
+  z-index: 1;
+ }
+ 
+ .button::before, .button::after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 50px;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  border-radius: 50%;
+  z-index: -1;
+  background-color: var(--color);
+  transition: 1s ease;
+ }
+ 
+ .button::before {
+  top: -1em;
+  left: -1em;
+ }
+ 
+ .button::after {
+  left: calc(100% + 1em);
+  top: calc(100% + 1em);
+ }
+ 
+ .button:hover::before, .button:hover::after {
+  height: 410px;
+  width: 410px;
+ }
+ 
+ .button:hover {
+  color: rgb(10, 25, 30);
+ }
+ 
+ .button:active {
+  filter: brightness(.8);
+ }
+  
+  /* Entrada de data */
+  #datetime {
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 1rem;
+    max-width: 50%;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #444;
   }
 }
