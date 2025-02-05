@@ -3,115 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clima - CountClock</title>
-    <link rel="stylesheet" href="../css/styleclima.css">
+    <title>Clima</title>
+    <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
     <div class="container">
-        <div>
-            <h1>Previsão do Tempo</h1>
-            <input type="text" id="city" class="input" placeholder="Digite o nome da cidade">
-            <button onclick="searchWeather()">Buscar Clima</button>
-
-            <!-- Ícone do clima -->
-            <img id="weather-icon" class="weather-icon" src="" alt="Ícone do clima">
-
-            <!-- Informações do clima -->
-            <div class="weather-info">
-                <div>Localização: <span id="location">Carregando...</span></div>
-                <div>Temperatura: <span id="temperature">Carregando...</span></div>
-                <div>Sensação Térmica: <span id="feels-like">Carregando...</span></div>
-                <div>Condição: <span id="condition">Carregando...</span></div>
-                <div>Umidade: <span id="humidity">Carregando...</span></div>
-                <div>Vento: <span id="wind">Carregando...</span></div>
-                <div>Direção do Vento: <span id="wind-direction">Carregando...</span></div>
-                <div>Visibilidade: <span id="visibility">Carregando...</span></div>
-                <div>Nuvens: <span id="clouds">Carregando...</span></div>
-                <div>Chuva: <span id="rain">Carregando...</span></div>
-                <div>Neve: <span id="snow">Carregando...</span></div>
-            </div>
+        <h1>Previsão do Tempo</h1>
+        <input type="text" class="input" placeholder="Digite sua cidade">
+        <button>Pesquisar</button>
+        <img src="weather-icon.png" alt="Ícone do Clima" class="weather-icon">
+        <div class="weather-info">
+            <div>Temperatura: 25°C</div>
+            <div>Umidade: 60%</div>
+            <div>Vento: 10 km/h</div>
         </div>
-
-        <!-- Cidades pesquisadas -->
         <div class="city-links">
-            <h3>Cidades Pesquisadas:</h3>
-            <button onclick="clearRecentSearches()">Limpar Pesquisas Recentes</button>
-            <div id="recent-cities"></div>
+            <a href="#">Nova York</a>
+            <a href="#">Tóquio</a>
+            <a href="#">Londres</a>
+            <button>Limpar Pesquisas</button>
         </div>
     </div>
-
-    <script>
-        // Função para buscar o clima
-        async function searchWeather() {
-            const city = document.getElementById('city').value.trim();
-            if (!city) {
-                alert('Por favor, insira o nome da cidade.');
-                return;
-            }
-
-            const apiKey = 'e7314838ebd86431d951d53c59e7fd20'; // Substitua pela sua chave da API
-            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric&lang=pt_br`;
-
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error('Cidade não encontrada ou erro na API.');
-                }
-                const data = await response.json();
-
-                // Atualizar os dados na página
-                document.getElementById('location').textContent = `${data.name}, ${data.sys.country}`;
-                document.getElementById('temperature').textContent = `${data.main.temp}°C`;
-                document.getElementById('feels-like').textContent = `${data.main.feels_like}°C`;
-                document.getElementById('condition').textContent = data.weather[0].description;
-                document.getElementById('humidity').textContent = `${data.main.humidity}%`;
-                document.getElementById('wind').textContent = `${data.wind.speed} m/s`;
-                document.getElementById('wind-direction').textContent = getWindDirection(data.wind.deg);
-                document.getElementById('visibility').textContent = `${data.visibility / 1000} km`;
-                document.getElementById('clouds').textContent = `${data.clouds.all}%`;
-                document.getElementById('rain').textContent = data.rain ? `${data.rain['1h']} mm` : '0 mm';
-                document.getElementById('snow').textContent = data.snow ? `${data.snow['1h']} mm` : '0 mm';
-
-                // Atualizar o ícone do clima
-                const iconCode = data.weather[0].icon;
-                const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
-                document.getElementById('weather-icon').src = iconUrl;
-            } catch (error) {
-                alert(error.message || 'Erro ao buscar o clima.');
-            }
-        }
-
-        // Função para obter a direção do vento
-        function getWindDirection(degrees) {
-            const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-            const index = Math.round((degrees % 360) / 45) % 8;
-            return directions[index];
-        }
-
-        // Função para limpar pesquisas recentes
-        function clearRecentSearches() {
-            localStorage.removeItem('recentSearches');
-            updateRecentCitiesList();
-        }
-
-        // Função para atualizar a lista de cidades pesquisadas
-        function updateRecentCitiesList() {
-            const recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
-            const recentCitiesDiv = document.getElementById('recent-cities');
-            recentCitiesDiv.innerHTML = '';
-            recentSearches.forEach(city => {
-                const link = document.createElement('a');
-                link.textContent = city;
-                link.href = '#';
-                link.onclick = () => searchWeather(city);
-                recentCitiesDiv.appendChild(link);
-            });
-        }
-
-        // Carregar pesquisas recentes ao carregar a página
-        window.onload = () => {
-            updateRecentCitiesList();
-        };
-    </script>
 </body>
 </html>
