@@ -1,291 +1,233 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <meta name="description" content="CountClock: Informações do clima em tempo real.">
-  <meta name="author" content="Seu Nome">
-  <meta name="keywords" content="clima, tempo, previsão do tempo, PWA">
-  <title>Clima - CountClock</title>
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="../assets/icons/favicon-32x32.png" type="image/png">
-  <link rel="apple-touch-icon" href="../assets/icons/icon-192x192.png">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    /* Reset CSS e estilos globais */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Roboto', sans-serif; background-color: #1a1a1a; color: #e0e0e0; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; text-align: center; }
-    .container { max-width: 800px; width: 100%; padding: 20px; }
-    .menu-container { position: absolute; top: 20px; right: 20px; z-index: 1000; }
-    .menu-icon { font-size: 1.5rem; cursor: pointer; color: #e0e0e0; }
-    .menu-dropdown { display: none; position: absolute; right: 0; background-color: #333; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000; }
-    .menu-dropdown button { display: block; width: 100%; padding: 10px 20px; border: none; background-color: transparent; color: #e0e0e0; font-size: 1rem; text-align: left; cursor: pointer; transition: background-color 0.3s; }
-    .menu-dropdown button:hover { background-color: #444; }
-    .weather-info { margin-bottom: 40px; }
-    .weather-info h1 { font-size: 2.5rem; margin-bottom: 20px; color: #e0e0e0; }
-    .weather-icon { width: 100px; height: 100px; margin-bottom: 20px; }
-    .weather-info p { font-size: 1.2rem; margin: 10px 0; color: #e0e0e0; }
-    .input-container { margin: 20px 0; }
-    .input-container label { display: block; margin-bottom: 5px; font-size: 1rem; color: #e0e0e0; }
-    .input-container input, .input-container select { padding: 10px; font-size: 1rem; border: 1px solid #444; border-radius: 5px; width: 100%; max-width: 300px; background-color: #333; color: #e0e0e0; }
-    .input-container button { padding: 10px 20px; border: none; border-radius: 5px; background-color: #8b0000; color: white; font-size: 1rem; cursor: pointer; transition: background-color 0.3s; margin-top: 10px; }
-    .input-container button:hover { background-color: #6b0000; }
-    .city-buttons-container { margin-top: 20px; }
-    .city-button { display: inline-block; margin: 5px; padding: 10px 20px; background-color: #444; color: #e0e0e0; border-radius: 5px; cursor: pointer; transition: background-color 0.3s, transform 0.2s; text-decoration: none; font-size: 1rem; }
-    .city-button:hover { background-color: #555; transform: translateY(-2px); }
-    .city-button:active { transform: translateY(0); }
-    .clear-recent { padding: 10px 20px; border: none; border-radius: 5px; background-color: #8b0000; color: white; font-size: 1rem; cursor: pointer; transition: background-color 0.3s; margin-top: 10px; }
-    .clear-recent:hover { background-color: #6b0000; }
-    .loading { font-size: 1.2rem; color: #e0e0e0; display: none; }
-    @media (max-width: 600px) { .weather-info h1 { font-size: 1.8rem; margin-top: 40px; } .weather-info p { font-size: 1rem; } .input-container input, .input-container select { max-width: 100%; } }
-    @media (max-width: 400px) { .weather-info h1 { font-size: 1.5rem; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clima - CountClock</title>
+    <style>
+        /* Estilo global */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212; /* Fundo escuro */
+            color: #e0e0e0; /* Texto claro */
+            line-height: 1.6;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #1e1e1e; /* Fundo do container */
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Cabeçalho */
+        h1 {
+            text-align: center;
+            color: #bb86fc; /* Cor roxa para destaque */
+            margin-bottom: 20px;
+        }
+
+        /* Inputs e botões */
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #2c2c2c; /* Fundo escuro para inputs */
+            color: #e0e0e0; /* Texto claro */
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #bb86fc; /* Botão roxo */
+            color: #121212; /* Texto escuro no botão */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #9c27b0; /* Efeito hover mais escuro */
+        }
+
+        /* Informações do clima */
+        .weather-info {
+            margin-top: 20px;
+        }
+
+        .weather-info div {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        /* Links de cidades pesquisadas */
+        .city-links {
+            margin-top: 20px;
+        }
+
+        .city-links a {
+            display: block;
+            margin: 5px 0;
+            text-decoration: none;
+            color: #bb86fc; /* Cor roxa para links */
+            cursor: pointer;
+        }
+
+        .city-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Botão de limpar pesquisas */
+        .city-links button {
+            width: 100%;
+            padding: 10px;
+            background-color: #cf6679; /* Vermelho suave para alerta */
+            color: #121212;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .city-links button:hover {
+            background-color: #b00020; /* Vermelho mais escuro no hover */
+        }
+    </style>
 </head>
 <body>
-  <!-- Menu Suspenso -->
-  <div class="menu-container">
-    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-    <div class="menu-dropdown" id="menu-dropdown">
-      <button onclick="window.location.href = '../index.html';">CountClock</button>
-      <button onclick="window.location.href = 'configuracoes.html';">Permissões</button>
-    </div>
-  </div>
+    <div class="container">
+        <h1>Clima - CountClock</h1>
+        <div>
+            <label for="city">Cidade:</label>
+            <input type="text" id="city" placeholder="Digite o nome da cidade (ex: Dubai)">
+        </div>
+        <button onclick="searchWeather()">Buscar Clima</button>
 
-  <div class="container">
-    <!-- Informações do Clima -->
-    <div class="weather-info" id="weather-info">
-      <h1>Informações do Clima</h1>
-      <img class="weather-icon" id="weather-icon" src="" alt="Ícone do clima">
-      <p id="weather-location">Localização: Carregando...</p>
-      <p id="weather-temp">Temperatura: Carregando...</p>
-      <p id="weather-feels-like">Sensação Térmica: Carregando...</p>
-      <p id="weather-condition">Condição: Carregando...</p>
-      <p id="weather-humidity">Umidade: Carregando...</p>
-      <p id="weather-wind">Vento: Carregando...</p>
-      <p id="weather-wind-direction">Direção do Vento: Carregando...</p>
-      <p id="weather-visibility">Visibilidade: Carregando...</p>
-      <p id="weather-clouds">Nuvens: Carregando...</p>
-      <p id="weather-rain">Chuva: Carregando...</p>
-      <p id="weather-snow">Neve: Carregando...</p>
-    </div>
+        <div class="weather-info">
+            <div>Localização: <span id="location">Carregando...</span></div>
+            <div>Temperatura: <span id="temperature">Carregando...</span></div>
+            <div>Sensação Térmica: <span id="feels-like">Carregando...</span></div>
+            <div>Condição: <span id="condition">Carregando...</span></div>
+            <div>Umidade: <span id="humidity">Carregando...</span></div>
+            <div>Vento: <span id="wind">Carregando...</span></div>
+            <div>Direção do Vento: <span id="wind-direction">Carregando...</span></div>
+            <div>Visibilidade: <span id="visibility">Carregando...</span></div>
+            <div>Nuvens: <span id="clouds">Carregando...</span></div>
+            <div>Chuva: <span id="rain">Carregando...</span></div>
+            <div>Neve: <span id="snow">Carregando...</span></div>
+        </div>
 
-    <!-- Inputs e Botões -->
-    <div class="input-container" id="input-container">
-      <label for="location-input">CEP ou Cidade:</label>
-      <input type="text" id="location-input" placeholder="Digite seu CEP ou cidade">
-      <label for="country-select">País:</label>
-      <select id="country-select">
-        <option value="BR">Brasil</option>
-        <option value="US">Estados Unidos</option>
-        <option value="GB">Reino Unido</option>
-        <option value="FR">França</option>
-        <option value="DE">Alemanha</option>
-        <option value="JP">Japão</option>
-        <option value="CA">Canadá</option>
-        <option value="AU">Austrália</option>
-      </select>
-      <button onclick="fetchWeather()">Buscar Clima</button>
+        <div class="city-links">
+            <h3>Cidades Pesquisadas:</h3>
+            <button onclick="clearRecentSearches()">Limpar Pesquisas Recentes</button>
+            <div id="recent-cities"></div>
+        </div>
     </div>
 
-    <!-- Cidades Pesquisadas -->
-    <div class="recent-searches" id="recent-searches">
-      <h2>Cidades Pesquisadas</h2>
-      <div id="city-buttons-container"></div>
-      <button class="clear-recent" onclick="clearRecentSearches()">Limpar Pesquisas Recentes</button>
-    </div>
+    <script>
+        // Constantes e variáveis globais
+        const apiKey = 'e7314838ebd86431d951d53c59e7fd20'; // Substitua 'xxxxxx' pela sua chave da API OpenWeatherMap
+        const recentSearchesKey = 'recentSearches'; // Chave para armazenar pesquisas recentes
 
-    <!-- Mensagem de Carregamento -->
-    <p class="loading" id="loading">Carregando...</p>
-  </div>
+        // Função para buscar o clima
+        async function searchWeather(city) {
+            const inputCity = city || document.getElementById('city').value.trim();
+            if (!inputCity) {
+                alert('Por favor, insira o nome da cidade.');
+                return;
+            }
 
-  <script>
-    // Constantes e variáveis globais
-    const apiKey = 'e7314838ebd86431d951d53c59e7fd20'; // Chave da API OpenWeatherMap
-    const recentSearchesKey = 'recentSearches'; // Chave para armazenar pesquisas recentes
-    const lastCityKey = 'lastCity'; // Chave para armazenar a última cidade pesquisada
-    const cityButtonsContainer = document.getElementById('city-buttons-container');
+            try {
+                // URL da API OpenWeatherMap
+                const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(inputCity)}&appid=${apiKey}&units=metric&lang=pt_br`;
 
-    // Função para alternar o menu suspenso
-    function toggleMenu() {
-      const menuDropdown = document.getElementById('menu-dropdown');
-      menuDropdown.style.display = menuDropdown.style.display === 'block' ? 'none' : 'block';
-    }
+                // Fazendo a requisição à API
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Cidade não encontrada ou erro na API.');
+                }
 
-    // Fechar o menu ao clicar fora dele
-    window.onclick = function (event) {
-      if (!event.target.matches('.menu-icon')) {
-        const menuDropdown = document.getElementById('menu-dropdown');
-        if (menuDropdown.style.display === 'block') {
-          menuDropdown.style.display = 'none';
+                const data = await response.json();
+
+                // Atualizando os dados na página
+                document.getElementById('location').textContent = `${data.name}, ${data.sys.country}`;
+                document.getElementById('temperature').textContent = `${data.main.temp}°C`;
+                document.getElementById('feels-like').textContent = `${data.main.feels_like}°C`;
+                document.getElementById('condition').textContent = data.weather[0].description;
+                document.getElementById('humidity').textContent = `${data.main.humidity}%`;
+                document.getElementById('wind').textContent = `${data.wind.speed} m/s`;
+                document.getElementById('wind-direction').textContent = getWindDirection(data.wind.deg);
+                document.getElementById('visibility').textContent = `${data.visibility / 1000} km`;
+                document.getElementById('clouds').textContent = `${data.clouds.all}%`;
+                document.getElementById('rain').textContent = data.rain ? `${data.rain['1h']} mm` : '0 mm';
+                document.getElementById('snow').textContent = data.snow ? `${data.snow['1h']} mm` : '0 mm';
+
+                // Salvando a pesquisa recente
+                saveRecentSearch(inputCity);
+
+                // Atualizar a lista de cidades pesquisadas
+                updateRecentCitiesList();
+            } catch (error) {
+                alert(error.message || 'Erro ao buscar o clima.');
+            }
         }
-      }
-    };
 
-    // Função para buscar dados do tempo
-    async function fetchWeather() {
-      const input = document.getElementById('location-input').value.trim();
-      const country = document.getElementById('country-select').value;
-
-      // Validação de entrada
-      if (!input) {
-        alert('Por favor, insira um CEP ou o nome da cidade.');
-        return;
-      }
-
-      // Exibe o indicador de carregamento
-      document.getElementById('loading').style.display = 'block';
-
-      try {
-        // Verifica se o input é um CEP válido (apenas para o Brasil)
-        if (country === 'BR' && /^\d{8}$/.test(input)) {
-          await fetchWeatherByCEP(input);
-        } else {
-          // Caso contrário, busca por nome da cidade
-          await fetchWeatherByCity(input, country);
+        // Função para obter a direção do vento
+        function getWindDirection(degrees) {
+            const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+            const index = Math.round((degrees % 360) / 45) % 8;
+            return directions[index];
         }
-      } catch (error) {
-        // Exibe mensagem de erro
-        document.getElementById('location-message').textContent = error.message;
-        document.getElementById('location-message').style.color = '#ff4444';
-      } finally {
-        // Oculta o indicador de carregamento
-        document.getElementById('loading').style.display = 'none';
-      }
-    }
 
-    // Função para buscar dados do tempo por CEP
-    async function fetchWeatherByCEP(cep) {
-      // Faz a requisição à API do ViaCEP
-      const viaCepResponse = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-      const viaCepData = await viaCepResponse.json();
-
-      // Verifica se o CEP foi encontrado
-      if (viaCepData.erro) {
-        throw new Error('CEP não encontrado. Verifique o CEP e tente novamente.');
-      }
-
-      // Obtém a cidade e o estado a partir do CEP
-      const city = viaCepData.localidade;
-      const state = viaCepData.uf;
-
-      // Faz a requisição à API do OpenWeatherMap
-      const weatherResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city},BR-${state}&appid=${apiKey}&units=metric&lang=pt`
-      );
-      const weatherData = await weatherResponse.json();
-
-      // Atualiza as informações do clima na interface
-      updateWeatherInfo(weatherData);
-      // Adiciona a cidade à lista de pesquisas recentes
-      addRecentSearch(`${city}, ${state}`);
-      // Salva a última cidade pesquisada
-      saveLastCity(`${city}, ${state}`);
-    }
-
-    // Função para buscar dados do tempo por nome da cidade
-    async function fetchWeatherByCity(city, country) {
-      // Faz a requisição à API do OpenWeatherMap
-      const weatherResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${apiKey}&units=metric&lang=pt`
-      );
-
-      // Verifica se a cidade foi encontrada
-      if (!weatherResponse.ok) {
-        throw new Error('Cidade não encontrada. Verifique o nome e o país e tente novamente.');
-      }
-
-      // Atualiza as informações do clima na interface
-      const weatherData = await weatherResponse.json();
-      updateWeatherInfo(weatherData);
-      // Adiciona a cidade à lista de pesquisas recentes
-      addRecentSearch(`${city}, ${country}`);
-      // Salva a última cidade pesquisada
-      saveLastCity(`${city}, ${country}`);
-    }
-
-    // Função para atualizar as informações do clima na interface
-    function updateWeatherInfo(data) {
-      document.getElementById('weather-location').textContent = `Localização: ${data.name}, ${data.sys.country}`;
-      document.getElementById('weather-temp').textContent = `Temperatura: ${data.main.temp}°C`;
-      document.getElementById('weather-feels-like').textContent = `Sensação Térmica: ${data.main.feels_like}°C`;
-      document.getElementById('weather-condition').textContent = `Condição: ${data.weather[0].description}`;
-      document.getElementById('weather-humidity').textContent = `Umidade: ${data.main.humidity}%`;
-      document.getElementById('weather-wind').textContent = `Vento: ${(data.wind.speed * 3.6).toFixed(2)} km/h`;
-      document.getElementById('weather-wind-direction').textContent = `Direção do Vento: ${getWindDirection(data.wind.deg)}`;
-      document.getElementById('weather-visibility').textContent = `Visibilidade: ${(data.visibility / 1000).toFixed(1)} km`;
-      document.getElementById('weather-clouds').textContent = `Nuvens: ${data.clouds.all}%`;
-      document.getElementById('weather-rain').textContent = `Chuva: ${data.rain ? `${data.rain['1h']} mm` : '0 mm'}`;
-      document.getElementById('weather-snow').textContent = `Neve: ${data.snow ? `${data.snow['1h']} cm` : '0 cm'}`;
-      document.getElementById('weather-icon').src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
-    }
-
-    // Função para converter graus em direção do vento
-    function getWindDirection(degrees) {
-      const directions = ['Norte', 'Nordeste', 'Leste', 'Sudeste', 'Sul', 'Sudoeste', 'Oeste', 'Noroeste'];
-      const index = Math.round((degrees % 360) / 45);
-      return directions[index % 8];
-    }
-
-    // Função para adicionar uma cidade à lista de pesquisas recentes
-    function addRecentSearch(location) {
-      let recentSearches = JSON.parse(localStorage.getItem(recentSearchesKey)) || [];
-      // Evita duplicatas
-      if (!recentSearches.includes(location)) {
-        recentSearches.unshift(location); // Adiciona no início da lista
-        if (recentSearches.length > 10) {
-          recentSearches.pop(); // Mantém apenas as últimas 10 pesquisas
+        // Função para salvar pesquisas recentes
+        function saveRecentSearch(city) {
+            let recentSearches = JSON.parse(localStorage.getItem(recentSearchesKey)) || [];
+            if (!recentSearches.includes(city)) {
+                recentSearches.push(city);
+                localStorage.setItem(recentSearchesKey, JSON.stringify(recentSearches));
+            }
         }
-        localStorage.setItem(recentSearchesKey, JSON.stringify(recentSearches));
-        updateCityButtons(); // Atualiza a lista de botões de cidade
-      }
-    }
 
-    // Função para salvar a última cidade pesquisada
-    function saveLastCity(location) {
-      localStorage.setItem(lastCityKey, location);
-    }
+        // Função para limpar pesquisas recentes
+        function clearRecentSearches() {
+            localStorage.removeItem(recentSearchesKey);
+            updateRecentCitiesList();
+        }
 
-    // Função para carregar a última cidade pesquisada
-    function loadLastCity() {
-      const lastCity = localStorage.getItem(lastCityKey);
-      if (lastCity) {
-        const [city, country] = lastCity.split(', ');
-        document.getElementById('location-input').value = city;
-        document.getElementById('country-select').value = country;
-        fetchWeather(); // Faz a busca do clima automaticamente
-      }
-    }
+        // Função para atualizar a lista de cidades pesquisadas
+        function updateRecentCitiesList() {
+            const recentCitiesContainer = document.getElementById('recent-cities');
+            const recentSearches = JSON.parse(localStorage.getItem(recentSearchesKey)) || [];
 
-    // Função para atualizar a lista de botões de cidade
-    function updateCityButtons() {
-      const recentSearches = JSON.parse(localStorage.getItem(recentSearchesKey)) || [];
-      cityButtonsContainer.innerHTML = recentSearches
-        .map((location) => {
-          const [city, country] = location.split(', ');
-          return `<div class="city-button" onclick="searchCity('${city}', '${country}')">${city}, ${country}</div>`;
-        })
-        .join('');
-    }
+            // Limpar a lista atual
+            recentCitiesContainer.innerHTML = '';
 
-    // Função para buscar o clima de uma cidade ao clicar no botão
-    function searchCity(city, country) {
-      document.getElementById('location-input').value = city;
-      document.getElementById('country-select').value = country;
-      fetchWeather(); // Faz a busca do clima
-    }
+            // Adicionar links para cada cidade pesquisada
+            recentSearches.forEach(city => {
+                const cityLink = document.createElement('a');
+                cityLink.textContent = city;
+                cityLink.href = '#';
+                cityLink.onclick = () => {
+                    searchWeather(city); // Buscar o clima ao clicar no link
+                    return false; // Evitar o comportamento padrão do link
+                };
+                recentCitiesContainer.appendChild(cityLink);
+            });
+        }
 
-    // Função para limpar a lista de pesquisas recentes
-    function clearRecentSearches() {
-      localStorage.removeItem(recentSearchesKey);
-      updateCityButtons(); // Atualiza a lista de botões de cidade
-    }
-
-    // Atualiza a lista de botões e carrega a última cidade ao carregar a página
-    window.onload = () => {
-      updateCityButtons();
-      loadLastCity();
-    };
-  </script>
+        // Carregar a lista de cidades pesquisadas ao carregar a página
+        window.onload = () => {
+            updateRecentCitiesList();
+        };
+    </script>
 </body>
 </html>
